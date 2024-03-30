@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutionException;
 
 @Component
 public class AuthenticationFailureListener {
-    private LoginAttemptService loginAttemptService;
+    private final LoginAttemptService loginAttemptService;
 
     @Autowired
     public AuthenticationFailureListener(LoginAttemptService loginAttemptService) {
