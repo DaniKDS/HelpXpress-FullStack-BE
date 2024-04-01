@@ -1,11 +1,19 @@
 package com.supportportal.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.util.*;
 
+@Data
+@ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Entity
 public class User implements Serializable {
     @Id
@@ -24,148 +32,36 @@ public class User implements Serializable {
     private Date lastLoginDate;
     private Date lastLoginDateDisplay;
     private Date joinDate;
-    private String role; //ROLE_USER{ read, edit }, ROLE_ADMIN {delete}
+    private String role; //ROLE_USER{ read, edit }, ROLE_ADMIN {delete}, ROLE_DOCTOR{read, edit-analize}, ROLE_ASSISTANT
     private String[] authorities;
     private boolean isActive;
     private boolean isNotLocked;
+    private Integer age;
+    private String phone;
+    @Temporal(TemporalType.DATE)
+    private Date birthDate;
+    private String disease;
+    private String diseaseType;
+    private String gender;
 
-    public User(){}
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "user_organization",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "organization_id")
+    )
+    private Set<Organization> organizations = new HashSet<>();
 
-    public User(Long id, String userId, String firstName, String lastName, String username, String password, String email, String profileImageUrl, Date lastLoginDate, Date lastLoginDateDisplay, Date joinDate, String role, String[] authorities, boolean isActive, boolean isNotLocked) {
-        this.id = id;
-        this.userId = userId;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.profileImageUrl = profileImageUrl;
-        this.lastLoginDate = lastLoginDate;
-        this.lastLoginDateDisplay = lastLoginDateDisplay;
-        this.joinDate = joinDate;
-        this.role = role;
-        this.authorities = authorities;
-        this.isActive = isActive;
-        this.isNotLocked = isNotLocked;
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Report> reports = new ArrayList<>();
 
-    public Long getId() {
-        return id;
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<>();
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Appointment> appointments = new ArrayList<>();
 
-    public String getUserId() {
-        return userId;
-    }
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Appointment> doctorAppointments = new ArrayList<>();
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getProfileImageUrl() {
-        return profileImageUrl;
-    }
-
-    public void setProfileImageUrl(String profileImageUrl) {
-        this.profileImageUrl = profileImageUrl;
-    }
-
-    public Date getLastLoginDate() {
-        return lastLoginDate;
-    }
-
-    public void setLastLoginDate(Date lastLoginDate) {
-        this.lastLoginDate = lastLoginDate;
-    }
-
-    public Date getLastLoginDateDisplay() {
-        return lastLoginDateDisplay;
-    }
-
-    public void setLastLoginDateDisplay(Date lastLoginDateDisplay) {
-        this.lastLoginDateDisplay = lastLoginDateDisplay;
-    }
-
-    public Date getJoinDate() {
-        return joinDate;
-    }
-
-    public void setJoinDate(Date joinDate) {
-        this.joinDate = joinDate;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String[] getAuthorities() {
-        return authorities;
-    }
-
-    public void setAuthorities(String[] authorities) {
-        this.authorities = authorities;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
-    }
-
-    public boolean isNotLocked() {
-        return isNotLocked;
-    }
-
-    public void setNotLocked(boolean notLocked) {
-        isNotLocked = notLocked;
-    }
 }

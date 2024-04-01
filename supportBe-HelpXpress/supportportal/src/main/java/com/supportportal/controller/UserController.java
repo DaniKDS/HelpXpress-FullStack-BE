@@ -1,4 +1,4 @@
-package com.supportportal.resource;
+package com.supportportal.controller;
 
 import com.supportportal.domain.HttpResponse;
 import com.supportportal.domain.User;
@@ -34,7 +34,7 @@ import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 @RestController
 @RequestMapping(path = { "/", "/user"})
-public class UserResource extends ExceptionHandling {
+public class UserController extends ExceptionHandling {
     public static final String EMAIL_SENT = "An email with a new password was sent to: ";
     public static final String USER_DELETED_SUCCESSFULLY = "User deleted successfully";
     private final AuthenticationManager authenticationManager;
@@ -42,7 +42,7 @@ public class UserResource extends ExceptionHandling {
     private final JWTTokenProvider jwtTokenProvider;
 
     @Autowired
-    public UserResource(AuthenticationManager authenticationManager, UserService userService, JWTTokenProvider jwtTokenProvider) {
+    public UserController(AuthenticationManager authenticationManager, UserService userService, JWTTokenProvider jwtTokenProvider) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
@@ -153,5 +153,27 @@ public class UserResource extends ExceptionHandling {
 
     private void authenticate(String username, String password) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+    }
+
+    @PostMapping("/addManyUsers")
+    //@PreAuthorize("hasAnyAuthority('role:admin')")
+    public ResponseEntity<HttpResponse> addManyUsers() {
+        try {
+            userService.saveManyUsers();
+            return response(OK, "50 de utilizatori au fost adăugați cu succes.");
+        } catch (Exception e) {
+            LOGGER.error("Eroare la adăugarea utilizatorilor: ", e);
+            return response(INTERNAL_SERVER_ERROR, "A apărut o eroare la adăugarea utilizatorilor.");
+        }
+    }
+    @DeleteMapping("/deleteLast100Users")
+    // @PreAuthorize("hasAuthority('role:admin')") // Activează această linie dacă securitatea este configurată
+    public ResponseEntity<String> deleteLast100Users() {
+        try {
+            userService.deleteLast100Users();
+            return ResponseEntity.ok("Ultimii 100 de utilizatori au fost șterși cu succes.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("A apărut o eroare la ștergerea utilizatorilor.");
+        }
     }
 }

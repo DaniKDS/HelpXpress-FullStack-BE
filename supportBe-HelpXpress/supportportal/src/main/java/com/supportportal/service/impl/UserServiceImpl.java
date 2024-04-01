@@ -33,6 +33,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import static com.supportportal.constant.FileConstant.*;
 import static com.supportportal.constant.FileConstant.NOT_AN_IMAGE_FILE;
@@ -123,6 +124,64 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return user;
     }
 
+    // Adaugă `String encryptedPassword` ca parametru la metoda addNewUser1
+    public User addNewUser1(String firstName, String lastName, String username, String email, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage, String encryptedPassword) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
+        validateNewUsernameAndEmail(EMPTY, username, email);
+        User user = new User();
+        // Folosește parola criptată primită ca parametru
+        user.setUserId(generateUserId());
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setJoinDate(new Date());
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPassword(encryptedPassword); // Setează parola criptată
+        user.setActive(isActive);
+        user.setNotLocked(isNonLocked);
+        user.setRole(getRoleEnumName(role).name());
+        user.setAuthorities(getRoleEnumName(role).getAuthorities());
+        user.setProfileImageUrl(getTemporaryProfileImageUrl(username));
+        userRepository.save(user);
+        saveProfileImage(user, profileImage);
+        LOGGER.info("New user password for " + username + ": 1234"); // Loghează parola ca referință, dar în producție ar fi bine să eviți asta
+        return user;
+    }
+    public void saveManyUsers() throws UserNotFoundException, EmailExistException, IOException, UsernameExistException, NotAnImageFileException {
+        String[] firstNames = {"Ion", "Vasile", "Claudiu", "Mihai", "Andrei", "Alexandru", "Dumitru",
+            "Stefan", "Daniel", "Adrian", "Viorel", "Marcel", "Cristian", "Catalin", "Marius", "George"};
+        String[] lastNames = {"Popescu", "Ionescu", "Nicolae", "Dumitrescu", "Mihai", "Andrei",
+            "Alexandrescu", "Stoica", "Constantin", "Marin", "Molnar", "Marian", "Petrescu", "Popa", "Gheorghe", "Dumitrache"};
+        String[] roles = {"ROLE_USER", "ROLE_ADMIN"};
+        Random random = new Random();
+        boolean isNonLocked = true;
+        boolean isActive = true;
+        MultipartFile profileImage = null; // Acesta este un placeholder; trebuie să gestionezi cumva încărcarea imaginilor dacă este necesar
+
+        // Generează o parolă comună pentru toți utilizatorii și criptează-o
+        String rawPassword = "1234";
+        String encryptedPassword = encodePassword(rawPassword); // Înlocuiește aceasta cu metoda ta de criptare
+
+        // Generează un timestamp pentru a asigura unicitatea username-ului și a email-ului
+        long currentTimeMillis = System.currentTimeMillis();
+
+        for (int i = 0; i < 50; i++) {
+            String firstName = firstNames[random.nextInt(firstNames.length)];
+            String lastName = lastNames[random.nextInt(lastNames.length)];
+
+            // Construiește username-uri și email-uri unice folosind timestamp-ul și indexul
+            String username = "user" + i;
+            String email = firstName.toLowerCase() + lastName.toLowerCase() + i + "@gmail.com";
+            String role = roles[random.nextInt(roles.length)];
+
+            // Apelează metoda pentru adăugarea unui nou utilizator cu valorile generate
+            addNewUser1(firstName, lastName, username, email, role, isNonLocked, isActive, profileImage, encryptedPassword);
+        }
+    }
+    public void deleteLast100Users() {
+        List<User> usersToDelete = userRepository.findTop100ByOrderByJoinDateDesc(); // Obține utilizatorii
+        userRepository.deleteAll(usersToDelete); // Șterge utilizatorii
+    }
+
     @Override
     public User updateUser(String currentUsername, String newFirstName, String newLastName, String newUsername, String newEmail, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
         User currentUser = validateNewUsernameAndEmail(currentUsername, newUsername, newEmail);
@@ -158,6 +217,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         saveProfileImage(user, profileImage);
         return user;
     }
+
 
     @Override
     public List<User> getUsers() {
