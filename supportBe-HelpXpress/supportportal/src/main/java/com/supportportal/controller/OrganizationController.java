@@ -23,4 +23,10 @@ public class OrganizationController {
         organizationService.addBulkOrganizations();
         return ResponseEntity.ok("50 de organizații au fost adăugate cu succes.");
     }
+
+    @PostMapping("/addUserOrganizationRelations")
+    public ResponseEntity<String> addUserOrganizationRelations() {
+        organizationService.addRelationsBetweenUsersAndOrganizations();
+        return ResponseEntity.ok("200 de relații utilizator-organizație au fost adăugate cu succes.");
+    }
 }

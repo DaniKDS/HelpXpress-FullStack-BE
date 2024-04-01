@@ -1,5 +1,7 @@
 package com.supportportal.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-@ToString
+@ToString(exclude = "users")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,6 +30,7 @@ public class Organization implements Serializable {
     private String phone;
 
     @ManyToMany(mappedBy = "organizations")
+    @JsonBackReference
     private Set<User> users = new HashSet<>();
 
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
