@@ -1,6 +1,5 @@
 package com.supportportal.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -10,7 +9,7 @@ import java.io.Serializable;
 import java.util.*;
 
 @Data
-@ToString(exclude = {"organizations", "reports", "reviews", "appointments", "doctorAppointments"})
+@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -52,7 +51,6 @@ public class User implements Serializable {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "organization_id")
     )
-    @JsonManagedReference
     private Set<Organization> organizations = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

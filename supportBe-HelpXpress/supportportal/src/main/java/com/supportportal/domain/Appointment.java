@@ -1,5 +1,6 @@
 package com.supportportal.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -20,8 +21,8 @@ public class Appointment implements Serializable {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user; // Cel care face programarea
+    @JoinColumn(name = "user_id")
+    private User user;
 
     // Referință opțională către doctor, dacă programarea este cu un doctor
     @ManyToOne

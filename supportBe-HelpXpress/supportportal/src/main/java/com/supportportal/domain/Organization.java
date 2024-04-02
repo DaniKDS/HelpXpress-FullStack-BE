@@ -30,7 +30,6 @@ public class Organization implements Serializable {
     private String phone;
 
     @ManyToMany(mappedBy = "organizations")
-    @JsonBackReference
     private Set<User> users = new HashSet<>();
 
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)

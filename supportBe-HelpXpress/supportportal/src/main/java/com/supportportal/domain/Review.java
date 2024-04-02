@@ -1,5 +1,6 @@
 package com.supportportal.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
