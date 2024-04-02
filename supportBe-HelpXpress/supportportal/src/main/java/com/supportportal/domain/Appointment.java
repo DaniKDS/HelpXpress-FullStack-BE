@@ -1,6 +1,6 @@
 package com.supportportal.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,11 +21,13 @@ public class Appointment implements Serializable {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JsonIgnore
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user; // Cel care face programarea
 
     // Referință opțională către doctor, dacă programarea este cu un doctor
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "doctor_id")
     private User doctor; // Presupunem că doctorii sunt și ei stocați în tabela `User` cu un rol specific
 
