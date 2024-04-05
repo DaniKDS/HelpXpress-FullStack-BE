@@ -38,6 +38,7 @@ public class User implements Serializable {
     private String[] authorities;
     private boolean isActive;
     private boolean isNotLocked;
+    ////////////////////////////
     private Integer age;
     private String phone;
     @Temporal(TemporalType.DATE)
