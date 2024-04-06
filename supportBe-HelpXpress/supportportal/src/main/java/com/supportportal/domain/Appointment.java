@@ -22,24 +22,30 @@ public class Appointment implements Serializable {
 
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user; // Cel care face programarea
+    @JoinColumn(name = "special_user_id") // Folosește un nume de coloană care reprezintă cheia străină
+    private SpecialUser specialUser;
 
-    // Referință opțională către doctor, dacă programarea este cu un doctor
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "doctor_id")
-    private User doctor; // Presupunem că doctorii sunt și ei stocați în tabela `User` cu un rol specific
+    @JoinColumn(name = "doctor_id") // Folosește un nume de coloană care reprezintă cheia străină
+    private Doctor doctor;
 
-    // Referință opțională către o organizație, dacă programarea este cu o organizație
     @ManyToOne
-    @JoinColumn(name = "organization_id")
+    @JsonIgnore
+    @JoinColumn(name = "organization_id") // Folosește un nume de coloană care reprezintă cheia străină
     private Organization organization;
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "assistant_id") // Folosește un nume de coloană care reprezintă cheia străină
+    private Assistant assistant;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date appointmentTime;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date appointmentEndTime;
+
     private String status;
     private String notes;
-
 }

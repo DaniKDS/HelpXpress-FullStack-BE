@@ -1,8 +1,8 @@
 package com.supportportal.controller;
 
-import com.supportportal.domain.HttpResponse;
+import com.supportportal.domain.Http.HttpResponse;
 import com.supportportal.domain.User;
-import com.supportportal.domain.UserPrincipal;
+import com.supportportal.domain.principal.UserPrincipal;
 import com.supportportal.exception.ExceptionHandling;
 import com.supportportal.exception.domain.*;
 import com.supportportal.service.UserService;

@@ -1,4 +1,4 @@
-package com.supportportal.domain;
+package com.supportportal.domain.Http;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.http.HttpStatus;

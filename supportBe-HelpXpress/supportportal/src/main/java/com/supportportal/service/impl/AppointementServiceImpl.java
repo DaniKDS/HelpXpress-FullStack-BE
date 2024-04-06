@@ -34,8 +34,8 @@ public class AppointementServiceImpl implements AppointmentService {
 
         for (int i = 0; i < 150; i++) {
             Appointment appointment = new Appointment();
-            appointment.setUser(users.get(random.nextInt(users.size())));
-            appointment.setDoctor(doctors.get(random.nextInt(doctors.size())));
+//            appointment.setUser(users.get(random.nextInt(users.size())));
+//            appointment.setDoctor(doctors.get(random.nextInt(doctors.size())));
             appointment.setOrganization(organizations.get(random.nextInt(organizations.size())));
             appointment.setAppointmentTime(new Date()); // Setează o dată și oră aleatorie sau specifică
             appointment.setStatus("Programat");

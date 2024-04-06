@@ -28,10 +28,14 @@ public class Organization implements Serializable {
     private String description;
     private String phone;
 
-    @ManyToMany(mappedBy = "organizations")
-    private Set<User> users = new HashSet<>();
-
-    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "organization")
     @JsonIgnore
-    private List<Appointment> organizationAppointments = new ArrayList<>();
+    private List<Review> reviews;
+
+    @OneToMany(mappedBy = "organization")
+    @JsonIgnore
+    private List<Appointment> appointments;
+
+    @ManyToMany(mappedBy = "organizations", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    private List<SpecialUser> specialUsers = new ArrayList<>();
 }

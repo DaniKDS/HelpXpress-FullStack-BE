@@ -47,19 +47,19 @@ public class OrganizationServiceImpl implements OrganizationService {
             User user = users.get(random.nextInt(users.size()));
             Organization organization = organizations.get(random.nextInt(organizations.size()));
 
-            Set<Organization> userOrganizations = user.getOrganizations();
-            if (userOrganizations == null) {
-                userOrganizations = new HashSet<>();
-                user.setOrganizations(userOrganizations);
-            }
-            userOrganizations.add(organization);
-
-            Set<User> organizationUsers = organization.getUsers();
-            if (organizationUsers == null) {
-                organizationUsers = new HashSet<>();
-                organization.setUsers(organizationUsers);
-            }
-            organizationUsers.add(user);
+//            Set<Organization> userOrganizations = user.getOrganizations();
+//            if (userOrganizations == null) {
+//                userOrganizations = new HashSet<>();
+//                user.setOrganizations(userOrganizations);
+//            }
+//            userOrganizations.add(organization);
+//
+//            Set<User> organizationUsers = organization.getUsers();
+//            if (organizationUsers == null) {
+//                organizationUsers = new HashSet<>();
+//                organization.setUsers(organizationUsers);
+//            }
+//            organizationUsers.add(user);
 
             // Salvăm ambele entități pentru a persista relația în baza de date
             userRepository.save(user);

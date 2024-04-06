@@ -1,7 +1,7 @@
 package com.supportportal.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.supportportal.domain.HttpResponse;
+import com.supportportal.domain.Http.HttpResponse;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;

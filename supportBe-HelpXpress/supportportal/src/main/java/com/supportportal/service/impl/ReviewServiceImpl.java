@@ -51,19 +51,8 @@ public class ReviewServiceImpl implements ReviewService {
         "Funcționalitățile pentru gestionarea stresului și anxietății sunt bine gândite.",
     };
 
-
     @Override
     public void addBulkReviews() throws Exception {
-        List<User> users = userRepository.findAll(); // Presupunând că ai această metodă
-        Random random = new Random();
 
-        for (int i = 0; i < 100; i++) {
-            Review review = new Review();
-            review.setUser(users.get(random.nextInt(users.size()))); // Alege un utilizator aleatoriu
-            review.setComment(COMMENTS[random.nextInt(COMMENTS.length)]); // Alege un comentariu aleatoriu
-            review.setRating(random.nextInt(5) + 1); // Alege un rating între 1 și 5
-            review.setReviewDate(new Date()); // Setează data curentă pentru recenzie
-            reviewRepository.save(review);
-        }
     }
 }

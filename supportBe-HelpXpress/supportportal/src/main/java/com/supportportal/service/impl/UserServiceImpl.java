@@ -1,7 +1,7 @@
 package com.supportportal.service.impl;
 
 import com.supportportal.domain.User;
-import com.supportportal.domain.UserPrincipal;
+import com.supportportal.domain.principal.UserPrincipal;
 import com.supportportal.enumeration.Role;
 import com.supportportal.exception.domain.*;
 import com.supportportal.repository.UserRepository;

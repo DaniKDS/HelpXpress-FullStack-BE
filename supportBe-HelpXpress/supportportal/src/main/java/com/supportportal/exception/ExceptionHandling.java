@@ -1,7 +1,7 @@
 package com.supportportal.exception;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.supportportal.domain.HttpResponse;
+import com.supportportal.domain.Http.HttpResponse;
 import com.supportportal.exception.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,6 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.persistence.NoResultException;
 import java.io.IOException;

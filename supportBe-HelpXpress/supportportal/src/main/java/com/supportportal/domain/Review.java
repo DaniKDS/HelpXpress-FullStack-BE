@@ -22,8 +22,23 @@ public class Review implements Serializable {
 
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "special_user_id")
+    private SpecialUser specialUser;
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "assistant_id")
+    private Assistant assistant;
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "doctor_id")
+    private Doctor doctor;
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "organization_id")
+    private Organization organization;
 
     private String comment;
     private Integer rating;
