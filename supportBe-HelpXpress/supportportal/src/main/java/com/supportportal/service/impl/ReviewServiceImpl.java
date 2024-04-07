@@ -177,4 +177,10 @@ public class ReviewServiceImpl implements ReviewService {
         return assistantRepository.findAllIds();
     }
 
+    public List<Review> findAllReviews() {
+        return reviewRepository.findAll();
+    }
+    public Review findReviewById(Long reviewId) {
+        return reviewRepository.findById(reviewId).orElse(null);
+    }
 }

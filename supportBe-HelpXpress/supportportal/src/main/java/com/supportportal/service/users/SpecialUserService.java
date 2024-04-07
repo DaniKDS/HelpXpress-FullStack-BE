@@ -104,5 +104,12 @@ public class SpecialUserService {
             }
         });
     }
+    public List<SpecialUser> findAllSpecialUsers() {
+        return specialUserRepository.findAll();
+    }
 
+    public SpecialUser findSpecialUserById(Long specialUserId) {
+        return specialUserRepository.findById(specialUserId).orElseThrow(() ->
+            new UsernameNotFoundException("SpecialUser not found with ID: " + specialUserId));
+    }
 }

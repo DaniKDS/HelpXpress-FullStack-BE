@@ -185,6 +185,11 @@ public class UserService implements com.supportportal.service.inter.UserService,
             addNewUser1(firstName, lastName, username, email, role, isNonLocked, isActive, profileImage, encryptedPassword, age, phone, birthDate, gender);
         }
     }
+    @Override
+    public List<User> findAllAssistants() {
+        return userRepository.findAllByRole(ROLE_ASSISTANT.name());
+    }
+
     public void deleteLast100Users() {
         List<User> usersToDelete = userRepository.findTop100ByOrderByJoinDateDesc(); // Obține utilizatorii
         userRepository.deleteAll(usersToDelete); // Șterge utilizatorii

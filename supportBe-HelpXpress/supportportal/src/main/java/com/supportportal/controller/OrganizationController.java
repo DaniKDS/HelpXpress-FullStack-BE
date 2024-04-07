@@ -1,13 +1,14 @@
 package com.supportportal.controller;
 
+import com.supportportal.domain.Organization;
 import com.supportportal.service.impl.OrganizationServiceImpl;
 import com.supportportal.service.inter.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/organization")
@@ -41,4 +42,14 @@ public class OrganizationController {
                 .body("A apărut o eroare la adăugarea asocierilor: " + e.getMessage());
         }
     }
+
+    @GetMapping("/allSpecialUserOrganizations")
+    public ResponseEntity<List<Organization>> findAllOrganizations() {
+        return ResponseEntity.ok(organizationService.findAllOrganization());
+    }
+    @GetMapping("/allSpecialUserOrganizations/{organizationId}")
+    public ResponseEntity<Organization> findOrganizationById(@PathVariable Long organizationId) {
+        return ResponseEntity.ok(organizationService.findOrganizationById(organizationId));
+    }
+
 }

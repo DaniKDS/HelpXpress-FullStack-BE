@@ -5,14 +5,12 @@ import com.supportportal.domain.User;
 import com.supportportal.repository.users.AssistantRepository;
 import com.supportportal.repository.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
-
-import static com.supportportal.enumeration.Role.ROLE_ASSISTANT;
 
 @Service
 public class AssistantService {
@@ -26,8 +24,8 @@ public class AssistantService {
         this.assistantRepository = assistantRepository;
     }
 
-    public List<User> findAllAssistants() {
-        return userRepository.findAllByRole(ROLE_ASSISTANT.name());
+    public List<Assistant> findAllAssistants() {
+        return assistantRepository.findAll();
     }
 
     private Random random = new Random();
@@ -51,4 +49,7 @@ public class AssistantService {
         }
     }
 
+    public Assistant findAssistantById(Long assistantId) {
+        return assistantRepository.findById(assistantId).orElse(null);
+    }
 }

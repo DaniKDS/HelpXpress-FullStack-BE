@@ -1,5 +1,6 @@
 package com.supportportal.service.impl;
 
+import com.supportportal.domain.Assistant;
 import com.supportportal.domain.Organization;
 import com.supportportal.domain.SpecialUser;
 import com.supportportal.domain.User;
@@ -91,11 +92,16 @@ public class OrganizationServiceImpl implements OrganizationService {
                 .orElseThrow(() -> new IllegalStateException("Organization cu id-ul " + organizationId + " nu a fost găsit."));
 
             // Adăugăm organizația la specialUser și salvăm specialUser
-            specialUser.getOrganizations().add(organization);
+            specialUser.getOrganization().add(organization);
             specialUserRepository.save(specialUser);
         }
     }
+    public List<Organization> findAllOrganization() {
+        return organizationRepository.findAll();
+    }
 
-
+    public Organization findOrganizationById(Long organizationId) {
+        return organizationRepository.findById(organizationId).orElse(null);
+    }
 
 }

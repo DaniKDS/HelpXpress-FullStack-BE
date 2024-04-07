@@ -1,6 +1,9 @@
 package com.supportportal.controller.users;
 
+import com.supportportal.domain.Assistant;
+import com.supportportal.domain.Doctor;
 import com.supportportal.domain.Http.HttpResponse;
+import com.supportportal.domain.SpecialUser;
 import com.supportportal.domain.User;
 import com.supportportal.domain.principal.UserPrincipal;
 import com.supportportal.exception.ExceptionHandling;
@@ -29,6 +32,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 import static com.supportportal.constant.FileConstant.*;
 import static com.supportportal.constant.SecurityConstant.JWT_TOKEN_HEADER;
@@ -112,21 +116,39 @@ public class UserController extends ExceptionHandling {
     }
 
     @GetMapping("/assistant")
-    public ResponseEntity<List<User>> getAllAssistants() {
-        List<User> assistants = assistantService.findAllAssistants();
+    public ResponseEntity<List<Assistant>> getAllAssistants() {
+        List<Assistant> assistants = assistantService.findAllAssistants();
         return new ResponseEntity<>(assistants, HttpStatus.OK);
     }
 
+    @GetMapping("/assistant/{assistantId}")
+    public ResponseEntity<Assistant> getAssistant(@PathVariable("assistantId") Long assistantId) {
+        Assistant assistant = assistantService.findAssistantById(assistantId);
+        return new ResponseEntity<>(assistant, HttpStatus.OK);
+    }
+
     @GetMapping("/doctor")
-    public ResponseEntity<List<User>> getAllDoctors() {
-        List<User> doctors = doctorService.findAllDoctors();
+    public ResponseEntity<List<Doctor>> getAllDoctors() {
+        List<Doctor> doctors = doctorService.findAllDoctors();
         return new ResponseEntity<>(doctors, HttpStatus.OK);
     }
 
+    @GetMapping("/doctor/{doctorId}")
+    public ResponseEntity<Doctor> getDoctor(@PathVariable("doctorId") Long doctorId) {
+        Doctor doctor = doctorService.findDoctorById(doctorId);
+        return new ResponseEntity<>(doctor, HttpStatus.OK);
+    }
+
     @GetMapping("/specialPerson")
-    public ResponseEntity<List<User>> getAllSpecialPersons() {
-        List<User> specialPersons = specialUserService.findAllSpecialPersons();
+    public ResponseEntity<List<SpecialUser>> getAllSpecialPersons() {
+        List<SpecialUser> specialPersons = specialUserService.findAllSpecialUsers();
         return new ResponseEntity<>(specialPersons, HttpStatus.OK);
+    }
+
+    @GetMapping("/specialPerson/{specialUserId}")
+    public ResponseEntity<SpecialUser> getSpecialPerson(@PathVariable("specialUserId") Long specialUserId) {
+        SpecialUser specialPerson = specialUserService.findSpecialUserById(specialUserId);
+        return new ResponseEntity<>(specialPerson, HttpStatus.OK);
     }
 
     @GetMapping("/resetpassword/{email}")
@@ -235,7 +257,6 @@ public class UserController extends ExceptionHandling {
             return response(INTERNAL_SERVER_ERROR, "A apărut o eroare la adăugarea utilizatorilor speciali.");
         }
     }
-
 
 
 }

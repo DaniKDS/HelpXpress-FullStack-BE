@@ -1,6 +1,7 @@
 package com.supportportal.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -45,11 +46,12 @@ public class SpecialUser implements Serializable {
     private Assistant assistant;
 
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JsonIgnore
     @JoinTable(
         name = "specialuser_organization", // Name of the join table
         joinColumns = @JoinColumn(name = "special_user_id", referencedColumnName = "id"), // Foreign key for SpecialUser in join table
         inverseJoinColumns = @JoinColumn(name = "organization_id", referencedColumnName = "id") // Foreign key for Organization in join table
     )
-    private List<Organization> organizations = new ArrayList<>();
+    private List<Organization> organization = new ArrayList<>();
 
 }

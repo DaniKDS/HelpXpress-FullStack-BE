@@ -13,6 +13,9 @@ import com.supportportal.service.inter.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -69,11 +72,25 @@ public class AppointementServiceImpl implements AppointmentService {
             appointmentRepository.save(appointment);
         }
     }
-
     private Date generateRandomAppointmentTime() {
-        // Logica pentru generarea unui timp aleatoriu între 24 de ore și 7 zile în viitor
-        long randomMillisInFuture = System.currentTimeMillis() + ((long) (24 + random.nextInt(168)) * 3600000);
-        return new Date(randomMillisInFuture);
+        // Alege o zi aleatoare între luni și vineri
+        int dayOfWeek;
+        LocalDateTime appointmentStart;
+
+        do {
+            // Generează un timp aleatoriu în viitor
+            long randomMillisInFuture = System.currentTimeMillis() + ((long) (24 + random.nextInt(24 * 7)) * 3600000);
+            appointmentStart = LocalDateTime.ofInstant(Instant.ofEpochMilli(randomMillisInFuture), ZoneId.systemDefault());
+
+            // Obține ziua săptămânii (1 = luni, ... , 7 = duminică)
+            dayOfWeek = appointmentStart.getDayOfWeek().getValue();
+        } while (dayOfWeek > 5); // Repetă dacă ziua este în weekend
+
+        // Ajustează ora la un interval aleatoriu între 8 AM și 4 PM pentru a permite o programare de 2 ore
+        int hour = 8 + random.nextInt(8); // 8 AM până la 4 PM pentru începutul programării
+        appointmentStart = appointmentStart.withHour(hour).withMinute(0).withSecond(0).withNano(0);
+
+        return Date.from(appointmentStart.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     private Long pickRandomValidId(List<Long> ids) {
@@ -82,5 +99,13 @@ public class AppointementServiceImpl implements AppointmentService {
         }
         Long id = ids.get(random.nextInt(ids.size()));
         return id;
+    }
+
+    public List<Appointment> findAllAppointments() {
+        return appointmentRepository.findAll();
+    }
+
+    public Appointment findAppointmentById(Long appointmentId) {
+        return appointmentRepository.findById(appointmentId).orElse(null);
     }
 }

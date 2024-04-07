@@ -21,7 +21,6 @@ public class Review implements Serializable {
     private Long id;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "special_user_id")
     private SpecialUser specialUser;
 
@@ -31,12 +30,10 @@ public class Review implements Serializable {
     private Assistant assistant;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "organization_id")
     private Organization organization;
 

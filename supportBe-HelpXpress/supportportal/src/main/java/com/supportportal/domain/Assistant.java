@@ -1,5 +1,6 @@
 package com.supportportal.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -36,6 +37,7 @@ public class Assistant implements Serializable {
     private List<Appointment> appointments;
 
     @OneToOne(mappedBy = "assistant", cascade = CascadeType.ALL)
+    @JsonIgnore
     private SpecialUser specialuser;
 
 }

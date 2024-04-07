@@ -36,6 +36,7 @@ public class Organization implements Serializable {
     @JsonIgnore
     private List<Appointment> appointments;
 
-    @ManyToMany(mappedBy = "organizations", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToMany(mappedBy = "organization", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JsonIgnore
     private List<SpecialUser> specialUsers = new ArrayList<>();
 }

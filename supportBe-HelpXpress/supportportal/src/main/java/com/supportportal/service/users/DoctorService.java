@@ -30,8 +30,12 @@ public class DoctorService {
         this.doctorRepository = doctorRepository;
     }
 
-    public List<User> findAllDoctors() {
-        return userRepository.findAllByRole(ROLE_DOCTOR.name());
+    public List<Doctor> findAllDoctors() {
+        return doctorRepository.findAll();
+    }
+
+    public Doctor findDoctorById(Long id) {
+        return doctorRepository.findById(id).orElse(null);
     }
 
     private Random random = new Random();

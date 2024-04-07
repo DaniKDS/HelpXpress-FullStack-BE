@@ -30,4 +30,6 @@ public interface UserService {
     User updateProfileImage(String username, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException;
 
     void saveManyUsers() throws UserNotFoundException, EmailExistException, IOException, UsernameExistException, NotAnImageFileException;
+
+    List<User> findAllAssistants();
 }
