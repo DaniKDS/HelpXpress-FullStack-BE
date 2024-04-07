@@ -42,10 +42,4 @@ public class User implements Serializable {
     private Date birthDate;
     private String gender;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Assistant assistant;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private SpecialUser specialUser;
-
 }

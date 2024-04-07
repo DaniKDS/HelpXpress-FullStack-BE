@@ -1,11 +1,14 @@
-package com.supportportal.controller;
+package com.supportportal.controller.users;
 
 import com.supportportal.domain.Http.HttpResponse;
 import com.supportportal.domain.User;
 import com.supportportal.domain.principal.UserPrincipal;
 import com.supportportal.exception.ExceptionHandling;
 import com.supportportal.exception.domain.*;
-import com.supportportal.service.UserService;
+import com.supportportal.service.inter.UserService;
+import com.supportportal.service.users.AssistantService;
+import com.supportportal.service.users.DoctorService;
+import com.supportportal.service.users.SpecialUserService;
 import com.supportportal.utility.JWTTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -39,12 +42,18 @@ public class UserController extends ExceptionHandling {
     public static final String USER_DELETED_SUCCESSFULLY = "User deleted successfully";
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
+    private final AssistantService assistantService;
+    private final DoctorService doctorService;
+    private final SpecialUserService specialUserService;
     private final JWTTokenProvider jwtTokenProvider;
 
     @Autowired
-    public UserController(AuthenticationManager authenticationManager, UserService userService, JWTTokenProvider jwtTokenProvider) {
+    public UserController(AuthenticationManager authenticationManager, UserService userService, AssistantService assistantService, DoctorService doctorService, SpecialUserService specialPersonService, SpecialUserService specialUserService, JWTTokenProvider jwtTokenProvider) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
+        this.assistantService = assistantService;
+        this.doctorService = doctorService;
+        this.specialUserService = specialUserService;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
@@ -102,6 +111,24 @@ public class UserController extends ExceptionHandling {
         return new ResponseEntity<>(users, OK);
     }
 
+    @GetMapping("/assistant")
+    public ResponseEntity<List<User>> getAllAssistants() {
+        List<User> assistants = assistantService.findAllAssistants();
+        return new ResponseEntity<>(assistants, HttpStatus.OK);
+    }
+
+    @GetMapping("/doctor")
+    public ResponseEntity<List<User>> getAllDoctors() {
+        List<User> doctors = doctorService.findAllDoctors();
+        return new ResponseEntity<>(doctors, HttpStatus.OK);
+    }
+
+    @GetMapping("/specialPerson")
+    public ResponseEntity<List<User>> getAllSpecialPersons() {
+        List<User> specialPersons = specialUserService.findAllSpecialPersons();
+        return new ResponseEntity<>(specialPersons, HttpStatus.OK);
+    }
+
     @GetMapping("/resetpassword/{email}")
     public ResponseEntity<HttpResponse> resetPassword(@PathVariable("email") String email) throws MessagingException, EmailNotFoundException {
         userService.resetPassword(email);
@@ -156,11 +183,10 @@ public class UserController extends ExceptionHandling {
     }
 
     @PostMapping("/addManyUsers")
-    //@PreAuthorize("hasAnyAuthority('role:admin')")
     public ResponseEntity<HttpResponse> addManyUsers() {
         try {
             userService.saveManyUsers();
-            return response(OK, "50 de utilizatori au fost adăugați cu succes.");
+            return response(OK, "80 de utilizatori au fost adăugați cu succes.");
         } catch (Exception e) {
             LOGGER.error("Eroare la adăugarea utilizatorilor: ", e);
             return response(INTERNAL_SERVER_ERROR, "A apărut o eroare la adăugarea utilizatorilor.");
@@ -176,4 +202,40 @@ public class UserController extends ExceptionHandling {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("A apărut o eroare la ștergerea utilizatorilor.");
         }
     }
+
+    @PostMapping("/addManyAssistants")
+    public ResponseEntity<HttpResponse> addManyAssistants() {
+        try {
+            assistantService.saveManyAssistants();
+            return response(OK, "Asistenții au fost adăugați cu succes.");
+        } catch (Exception e) {
+            LOGGER.error("Eroare la adăugarea asistenților: ", e);
+            return response(INTERNAL_SERVER_ERROR, "A apărut o eroare la adăugarea asistenților.");
+        }
+    }
+
+    @PostMapping("/addManyDoctors")
+    public ResponseEntity<HttpResponse> addManyDoctors() {
+        try {
+            doctorService.saveManyDoctors();
+            return response(OK, "Doctorii au fost adăugați cu succes.");
+        } catch (Exception e) {
+            LOGGER.error("Eroare la adăugarea doctorilor: ", e);
+            return response(INTERNAL_SERVER_ERROR, "A apărut o eroare la adăugarea doctorilor.");
+        }
+    }
+
+    @PostMapping("/addManySpecialUsers")
+    public ResponseEntity<HttpResponse> addManySpecialUsers() {
+        try {
+            specialUserService.saveManySpecialUsers();
+            return response(OK, "Utilizatorii speciali au fost adăugați cu succes.");
+        } catch (Exception e) {
+            LOGGER.error("Eroare la adăugarea utilizatorilor speciali: ", e);
+            return response(INTERNAL_SERVER_ERROR, "A apărut o eroare la adăugarea utilizatorilor speciali.");
+        }
+    }
+
+
+
 }

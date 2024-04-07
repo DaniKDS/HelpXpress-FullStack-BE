@@ -1,6 +1,6 @@
 package com.supportportal.controller;
 
-import com.supportportal.service.ReviewService;
+import com.supportportal.service.impl.ReviewServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,21 +12,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/review") // Acesta este path-ul de bază pentru toate endpoint-urile din acest controller
 public class ReviewController {
 
-    private final ReviewService reviewService;
+    private final ReviewServiceImpl reviewService;
 
     @Autowired
-    public ReviewController(ReviewService reviewService) {
+    public ReviewController(ReviewServiceImpl reviewService) {
         this.reviewService = reviewService;
     }
-
-    @PostMapping("/addBulkReviews")
-    public ResponseEntity<String> addBulkReviews() {
+    @PostMapping("/addRandomReviews")
+    public ResponseEntity<String> addRandomReviews() {
         try {
-            reviewService.addBulkReviews();
-            return ResponseEntity.ok("100 de recenzii au fost adăugate cu succes.");
+            reviewService.addRandomReviews();
+            return ResponseEntity.ok("Recenzii adăugate cu succes.");
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("A apărut o eroare la adăugarea recenziilor.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Eroare la adăugarea recenziilor: " + e.getMessage());
         }
     }
+
 }

@@ -5,8 +5,11 @@ import com.supportportal.domain.Organization;
 import com.supportportal.domain.User;
 import com.supportportal.repository.AppointmentRepository;
 import com.supportportal.repository.OrganizationRepository;
-import com.supportportal.repository.UserRepository;
-import com.supportportal.service.AppointmentService;
+import com.supportportal.repository.users.AssistantRepository;
+import com.supportportal.repository.users.DoctorRepository;
+import com.supportportal.repository.users.SpecialUserRepository;
+import com.supportportal.repository.users.UserRepository;
+import com.supportportal.service.inter.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,28 +23,64 @@ public class AppointementServiceImpl implements AppointmentService {
     private AppointmentRepository appointmentRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private SpecialUserRepository specialUserRepository;
 
     @Autowired
     private OrganizationRepository organizationRepository;
 
-    @Override
-    public void addBulkAppointments() {
-        List<User> users = userRepository.findAll();
-        List<User> doctors = userRepository.findAll(); // Presupunem că doctorii sunt filtrați în mod adecvat
-        List<Organization> organizations = organizationRepository.findAll();
-        Random random = new Random();
+    @Autowired
+    private DoctorRepository doctorRepository;
 
-        for (int i = 0; i < 150; i++) {
+    @Autowired
+    private AssistantRepository assistantRepository;
+
+    private Random random = new Random();
+
+    public void saveManyAppointments() {
+        List<Long> specialUserIds = specialUserRepository.findAllIds();
+        List<Long> organizationIds = organizationRepository.findAllIds();
+        List<Long> doctorIds = doctorRepository.findAllIds();
+        List<Long> assistantIds = assistantRepository.findAllIds();
+
+        for (int i = 0; i < 300; i++) {
+            Long specialUserId = pickRandomValidId(specialUserIds);
+            Long organizationId = pickRandomValidId(organizationIds);
+            Long doctorId = pickRandomValidId(doctorIds);
+            Long assistantId = pickRandomValidId(assistantIds);
+
+            // Verifică dacă toate ID-urile sunt valide
+            if (specialUserId == null || organizationId == null || doctorId == null || assistantId == null) {
+                continue; // Sari peste această iterație dacă oricare dintre ID-uri nu este valid
+            }
+
+            Date appointmentTime = generateRandomAppointmentTime();
+            Date appointmentEndTime = new Date(appointmentTime.getTime() + (random.nextInt(2) + 1) * 3600000); // 1-2 ore adăugate la appointmentTime
+
             Appointment appointment = new Appointment();
-//            appointment.setUser(users.get(random.nextInt(users.size())));
-//            appointment.setDoctor(doctors.get(random.nextInt(doctors.size())));
-            appointment.setOrganization(organizations.get(random.nextInt(organizations.size())));
-            appointment.setAppointmentTime(new Date()); // Setează o dată și oră aleatorie sau specifică
-            appointment.setStatus("Programat");
-            appointment.setNotes("Note pentru programare " + i);
+            appointment.setSpecialUserId(specialUserId);
+            appointment.setOrganizationId(organizationId);
+            appointment.setDoctorId(doctorId);
+            appointment.setAssistantId(assistantId);
+            appointment.setAppointmentTime(appointmentTime);
+            appointment.setAppointmentEndTime(appointmentEndTime);
+            appointment.setStatus("programată");
+            appointment.setNotes("Generat automat de sistem");
 
             appointmentRepository.save(appointment);
         }
+    }
+
+    private Date generateRandomAppointmentTime() {
+        // Logica pentru generarea unui timp aleatoriu între 24 de ore și 7 zile în viitor
+        long randomMillisInFuture = System.currentTimeMillis() + ((long) (24 + random.nextInt(168)) * 3600000);
+        return new Date(randomMillisInFuture);
+    }
+
+    private Long pickRandomValidId(List<Long> ids) {
+        if (ids.isEmpty()) {
+            return null;
+        }
+        Long id = ids.get(random.nextInt(ids.size()));
+        return id;
     }
 }

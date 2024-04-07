@@ -45,4 +45,18 @@ public class Review implements Serializable {
 
     @Temporal(TemporalType.DATE)
     private Date reviewDate;
+
+    public void setOrganizationId(Long organizationId) {
+        setOrganization(Organization.builder().id(organizationId).build());
+    }
+    public void setDoctorId(Long doctorId) {
+        setDoctor(Doctor.builder().id(doctorId).build());
+    }
+    public void setAssistantId(Long assistantId) {
+        setAssistant(Assistant.builder().id(assistantId).build());
+    }
+    public void setSpecialUserId(Long l) {
+        setSpecialUser(SpecialUser.builder().id(l).build());
+    }
+
 }

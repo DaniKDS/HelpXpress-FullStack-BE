@@ -48,4 +48,17 @@ public class Appointment implements Serializable {
 
     private String status;
     private String notes;
+
+    public void setSpecialUserId(Long userId) {
+        setSpecialUser(SpecialUser.builder().id(userId).build());
+    }
+    public void setOrganizationId(Long organizationId) {
+        setOrganization(Organization.builder().id(organizationId).build());
+    }
+    public void setDoctorId(Long doctorId) {
+        setDoctor(Doctor.builder().id(doctorId).build());
+    }
+    public void setAssistantId(Long assistantId) {
+        setAssistant(Assistant.builder().id(assistantId).build());
+    }
 }
