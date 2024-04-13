@@ -40,4 +40,13 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.findReviewById(Long.valueOf(reviewId)));
     }
 
+    @GetMapping("/doctor/{username}")
+    public ResponseEntity<List<Review>> findReviewsByDoctorUsername(@PathVariable String username) {
+        List<Review> reviews = reviewService.findAllReviewsByDoctorUsername(username);
+        if(reviews.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(reviews, HttpStatus.OK);
+    }
+
 }

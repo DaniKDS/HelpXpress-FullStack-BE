@@ -183,4 +183,8 @@ public class ReviewServiceImpl implements ReviewService {
     public Review findReviewById(Long reviewId) {
         return reviewRepository.findById(reviewId).orElse(null);
     }
+
+    public List<Review> findAllReviewsByDoctorUsername(String username) {
+        return reviewRepository.findAllByDoctorUsername(username);
+    }
 }

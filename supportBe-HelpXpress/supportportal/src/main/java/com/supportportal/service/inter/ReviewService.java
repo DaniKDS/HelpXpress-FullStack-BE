@@ -1,5 +1,9 @@
 package com.supportportal.service.inter;
 
-public interface ReviewService {
+import com.supportportal.domain.Review;
 
+import java.util.List;
+
+public interface ReviewService {
+    List<Review> findAllReviewsByDoctorUsername(String username);
 }

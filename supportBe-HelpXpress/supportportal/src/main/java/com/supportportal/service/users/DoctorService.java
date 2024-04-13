@@ -1,8 +1,10 @@
 package com.supportportal.service.users;
 
+import com.supportportal.domain.Appointment;
 import com.supportportal.domain.Doctor;
 import com.supportportal.domain.SpecialUser;
 import com.supportportal.domain.User;
+import com.supportportal.repository.AppointmentRepository;
 import com.supportportal.repository.users.DoctorRepository;
 import com.supportportal.repository.users.SpecialUserRepository;
 import com.supportportal.repository.users.UserRepository;
@@ -24,11 +26,14 @@ public class DoctorService {
     @Autowired
     private SpecialUserService specialUserService;
     private final SpecialUserRepository specialUserRepository;
+
+    private final AppointmentRepository appointmentRepository;
     private final DoctorRepository doctorRepository;
 
-    public DoctorService(UserRepository userRepository, SpecialUserRepository specialUserRepository, DoctorRepository doctorRepository) {
+    public DoctorService(UserRepository userRepository, SpecialUserRepository specialUserRepository, AppointmentRepository appointmentRepository, DoctorRepository doctorRepository) {
         this.userRepository = userRepository;
         this.specialUserRepository = specialUserRepository;
+        this.appointmentRepository = appointmentRepository;
         this.doctorRepository = doctorRepository;
     }
 
@@ -79,5 +84,9 @@ public class DoctorService {
         } else {
             throw new UsernameNotFoundException("Doctor with username " + username + " not found");
         }
+    }
+
+    public List<Appointment> findAppointmentsByDoctorUsername(String username) {
+        return appointmentRepository.findAppointmentsByDoctorUsername(username);
     }
 }

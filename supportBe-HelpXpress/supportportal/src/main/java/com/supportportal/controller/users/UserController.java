@@ -298,4 +298,15 @@ public class UserController extends ExceptionHandling {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping("/doctors/{username}/appointments")
+    public ResponseEntity<List<Appointment>> getAppointmentsByDoctorUsername(@PathVariable String username) {
+        try {
+            List<Appointment> appointments = doctorService.findAppointmentsByDoctorUsername(username);
+            return new ResponseEntity<>(appointments, HttpStatus.OK);
+        } catch (Exception e) {
+            // Log the exception details here
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
