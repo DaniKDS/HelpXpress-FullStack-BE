@@ -1,10 +1,7 @@
 package com.supportportal.controller.users;
 
-import com.supportportal.domain.Assistant;
-import com.supportportal.domain.Doctor;
+import com.supportportal.domain.*;
 import com.supportportal.domain.Http.HttpResponse;
-import com.supportportal.domain.SpecialUser;
-import com.supportportal.domain.User;
 import com.supportportal.domain.principal.UserPrincipal;
 import com.supportportal.exception.ExceptionHandling;
 import com.supportportal.exception.domain.*;
@@ -20,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -95,11 +93,14 @@ public class UserController extends ExceptionHandling {
                                        @RequestParam("lastName") String lastName,
                                        @RequestParam("username") String username,
                                        @RequestParam("email") String email,
+                                       @RequestParam("gender") String gender,
+                                       @RequestParam("phone") String phone,
                                        @RequestParam("role") String role,
                                        @RequestParam("isActive") String isActive,
                                        @RequestParam("isNonLocked") String isNonLocked,
                                        @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
-        User updatedUser = userService.updateUser(currentUsername, firstName, lastName, username,email, role, Boolean.parseBoolean(isNonLocked), Boolean.parseBoolean(isActive), profileImage);
+        User updatedUser;
+        updatedUser = userService.updateUser(currentUsername, firstName, lastName, username,email,gender,phone, role, Boolean.parseBoolean(isNonLocked), Boolean.parseBoolean(isActive), profileImage);
         return new ResponseEntity<>(updatedUser, OK);
     }
     
@@ -255,6 +256,22 @@ public class UserController extends ExceptionHandling {
         } catch (Exception e) {
             LOGGER.error("Eroare la adăugarea utilizatorilor speciali: ", e);
             return response(INTERNAL_SERVER_ERROR, "A apărut o eroare la adăugarea utilizatorilor speciali.");
+        }
+    }
+
+    @GetMapping("/special-users/by-username/{username}/doctors")
+    public ResponseEntity<List<Doctor>> getDoctorsBySpecialUserUsername(@PathVariable String username) {
+        List<Doctor> doctors = specialUserService.findDoctorsBySpecialUserUsername(username);
+        return ResponseEntity.ok(doctors);
+    }
+
+    @GetMapping("/special-users/{username}/assistant")
+    public ResponseEntity<Assistant> getAssistantBySpecialUserUsername(@PathVariable String username) {
+        try {
+            Assistant assistant = specialUserService.findAssistantBySpecialUserUsername(username);
+            return new ResponseEntity<>(assistant, HttpStatus.OK);
+        } catch (UsernameNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 

@@ -21,17 +21,14 @@ public class Appointment implements Serializable {
     private Long id;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "special_user_id") // Folosește un nume de coloană care reprezintă cheia străină
     private SpecialUser specialUser;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "doctor_id") // Folosește un nume de coloană care reprezintă cheia străină
     private Doctor doctor;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "organization_id") // Folosește un nume de coloană care reprezintă cheia străină
     private Organization organization;
 

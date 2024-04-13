@@ -1,14 +1,11 @@
 package com.supportportal.service.impl;
 
 import com.supportportal.domain.Appointment;
-import com.supportportal.domain.Organization;
-import com.supportportal.domain.User;
 import com.supportportal.repository.AppointmentRepository;
 import com.supportportal.repository.OrganizationRepository;
 import com.supportportal.repository.users.AssistantRepository;
 import com.supportportal.repository.users.DoctorRepository;
 import com.supportportal.repository.users.SpecialUserRepository;
-import com.supportportal.repository.users.UserRepository;
 import com.supportportal.service.inter.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -107,5 +104,9 @@ public class AppointementServiceImpl implements AppointmentService {
 
     public Appointment findAppointmentById(Long appointmentId) {
         return appointmentRepository.findById(appointmentId).orElse(null);
+    }
+
+    public List<Appointment> findBySpecialUserUsername(String username) {
+        return appointmentRepository.findBySpecialUserUserUsername(username);
     }
 }

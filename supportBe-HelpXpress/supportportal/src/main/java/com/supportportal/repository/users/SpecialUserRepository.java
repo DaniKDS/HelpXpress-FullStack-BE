@@ -12,4 +12,6 @@ public interface SpecialUserRepository extends JpaRepository<SpecialUser, Long>
     boolean existsByUserId(Long userId);
     @Query("SELECT su.id FROM SpecialUser su")
     List<Long> findAllIds();
+    SpecialUser findByUserUsername(String username);
+
 }

@@ -1,6 +1,7 @@
 package com.supportportal.repository.users;
 
 import com.supportportal.domain.Assistant;
+import com.supportportal.domain.SpecialUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -13,4 +14,5 @@ public interface AssistantRepository extends JpaRepository<Assistant, Long> {
     Optional<Object> findByUserId(Long id);
     @Query("SELECT su.id FROM Assistant su")
     List<Long> findAllIds();
+    Assistant findBySpecialuser_Id(Long id);
 }

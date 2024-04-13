@@ -10,6 +10,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     boolean existsByUserId(Long id);
     @Query("SELECT su.id FROM Doctor su")
     List<Long> findAllIds();
+    List<Doctor> findBySpecialUserId(Long id);
 }
 
 

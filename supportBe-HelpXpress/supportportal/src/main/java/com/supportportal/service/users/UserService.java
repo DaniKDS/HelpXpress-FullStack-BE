@@ -185,10 +185,6 @@ public class UserService implements com.supportportal.service.inter.UserService,
             addNewUser1(firstName, lastName, username, email, role, isNonLocked, isActive, profileImage, encryptedPassword, age, phone, birthDate, gender);
         }
     }
-    @Override
-    public List<User> findAllAssistants() {
-        return userRepository.findAllByRole(ROLE_ASSISTANT.name());
-    }
 
     public void deleteLast100Users() {
         List<User> usersToDelete = userRepository.findTop100ByOrderByJoinDateDesc(); // Obține utilizatorii
@@ -196,11 +192,13 @@ public class UserService implements com.supportportal.service.inter.UserService,
     }
 
     @Override
-    public User updateUser(String currentUsername, String newFirstName, String newLastName, String newUsername, String newEmail, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
+    public User updateUser(String currentUsername, String newFirstName, String newLastName, String newUsername, String newEmail,String gender,String phone,  String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
         User currentUser = validateNewUsernameAndEmail(currentUsername, newUsername, newEmail);
         currentUser.setFirstName(newFirstName);
         currentUser.setLastName(newLastName);
         currentUser.setUsername(newUsername);
+        currentUser.setGender(gender);
+        currentUser.setPhone(phone);
         currentUser.setEmail(newEmail);
         currentUser.setActive(isActive);
         currentUser.setNotLocked(isNonLocked);

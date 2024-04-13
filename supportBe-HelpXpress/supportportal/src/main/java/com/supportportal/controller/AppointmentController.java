@@ -40,4 +40,14 @@ public class AppointmentController {
     public ResponseEntity<Appointment> findAppointmentById(@PathVariable Long appointmentId) {
         return ResponseEntity.ok(appointmentService.findAppointmentById(appointmentId));
     }
+
+    @GetMapping("/findBySpecialUserUsername/{username}")
+    public ResponseEntity<List<Appointment>> getAppointmentsBySpecialUserUsername(@PathVariable String username) {
+        List<Appointment> appointments = appointmentService.findBySpecialUserUsername(username);
+        if(appointments.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(appointments, HttpStatus.OK);
+    }
+
 }

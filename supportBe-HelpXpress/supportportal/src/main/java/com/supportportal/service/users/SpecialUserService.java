@@ -1,18 +1,17 @@
 package com.supportportal.service.users;
 
 import com.supportportal.domain.Assistant;
+import com.supportportal.domain.Doctor;
 import com.supportportal.domain.SpecialUser;
 import com.supportportal.domain.User;
 import com.supportportal.repository.users.AssistantRepository;
+import com.supportportal.repository.users.DoctorRepository;
 import com.supportportal.repository.users.SpecialUserRepository;
 import com.supportportal.repository.users.UserRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 import static com.supportportal.enumeration.Role.ROLE_ASSISTANT;
 
@@ -21,11 +20,13 @@ public class SpecialUserService {
     private final UserRepository userRepository;
     private final SpecialUserRepository specialUserRepository;
     private final AssistantRepository assistantRepository;
+    private final DoctorRepository doctorRepository;
 
-    public SpecialUserService(UserRepository userRepository, SpecialUserRepository specialUserRepository, AssistantRepository assistantRepository) {
+    public SpecialUserService(UserRepository userRepository, SpecialUserRepository specialUserRepository, AssistantRepository assistantRepository, DoctorRepository doctorRepository) {
         this.userRepository = userRepository;
         this.specialUserRepository = specialUserRepository;
         this.assistantRepository = assistantRepository;
+        this.doctorRepository = doctorRepository;
     }
 
     public List<User> findAllSpecialPersons() {
@@ -111,5 +112,21 @@ public class SpecialUserService {
     public SpecialUser findSpecialUserById(Long specialUserId) {
         return specialUserRepository.findById(specialUserId).orElseThrow(() ->
             new UsernameNotFoundException("SpecialUser not found with ID: " + specialUserId));
+    }
+
+    public List<Doctor> findDoctorsBySpecialUserUsername(String username) {
+        SpecialUser user = specialUserRepository.findByUserUsername(username);
+        if (user != null) {
+            return doctorRepository.findBySpecialUserId(user.getId());
+        }
+        return new ArrayList<>();
+    }
+
+    public Assistant findAssistantBySpecialUserUsername(String username) {
+        SpecialUser user = specialUserRepository.findByUserUsername(username);
+        if (user != null) {
+            return assistantRepository.findBySpecialuser_Id(user.getId());
+        }
+        return null;
     }
 }
