@@ -5,6 +5,7 @@ import com.supportportal.domain.Http.HttpResponse;
 import com.supportportal.domain.principal.UserPrincipal;
 import com.supportportal.exception.ExceptionHandling;
 import com.supportportal.exception.domain.*;
+import com.supportportal.service.impl.OrganizationServiceImpl;
 import com.supportportal.service.inter.UserService;
 import com.supportportal.service.users.AssistantService;
 import com.supportportal.service.users.DoctorService;
@@ -47,15 +48,18 @@ public class UserController extends ExceptionHandling {
     private final AssistantService assistantService;
     private final DoctorService doctorService;
     private final SpecialUserService specialUserService;
+
+    private final OrganizationServiceImpl organizationServiceImpl;
     private final JWTTokenProvider jwtTokenProvider;
 
     @Autowired
-    public UserController(AuthenticationManager authenticationManager, UserService userService, AssistantService assistantService, DoctorService doctorService, SpecialUserService specialPersonService, SpecialUserService specialUserService, JWTTokenProvider jwtTokenProvider) {
+    public UserController(AuthenticationManager authenticationManager, UserService userService, AssistantService assistantService, DoctorService doctorService, SpecialUserService specialPersonService, SpecialUserService specialUserService, OrganizationServiceImpl organizationServiceImpl, JWTTokenProvider jwtTokenProvider) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.assistantService = assistantService;
         this.doctorService = doctorService;
         this.specialUserService = specialUserService;
+        this.organizationServiceImpl = organizationServiceImpl;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
@@ -270,6 +274,16 @@ public class UserController extends ExceptionHandling {
         try {
             Assistant assistant = specialUserService.findAssistantBySpecialUserUsername(username);
             return new ResponseEntity<>(assistant, HttpStatus.OK);
+        } catch (UsernameNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/special-users/{username}/organizations")
+    public ResponseEntity<List<Organization>> getOrganizationsByUsername(@PathVariable String username) {
+        try {
+            List<Organization> organizations = organizationServiceImpl.findOrganizationsByUsername(username);
+            return new ResponseEntity<>(organizations, HttpStatus.OK);
         } catch (UsernameNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

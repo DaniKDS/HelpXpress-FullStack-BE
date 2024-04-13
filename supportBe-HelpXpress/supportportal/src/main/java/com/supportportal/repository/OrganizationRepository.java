@@ -9,4 +9,6 @@ import java.util.List;
 public interface OrganizationRepository extends JpaRepository<Organization, Long>{
     @Query("SELECT su.id FROM Organization su")
     List<Long> findAllIds();
+
+
 }

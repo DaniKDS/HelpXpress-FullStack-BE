@@ -1,9 +1,7 @@
 package com.supportportal.service.users;
 
-import com.supportportal.domain.Assistant;
-import com.supportportal.domain.Doctor;
-import com.supportportal.domain.SpecialUser;
-import com.supportportal.domain.User;
+import com.supportportal.domain.*;
+import com.supportportal.repository.OrganizationRepository;
 import com.supportportal.repository.users.AssistantRepository;
 import com.supportportal.repository.users.DoctorRepository;
 import com.supportportal.repository.users.SpecialUserRepository;

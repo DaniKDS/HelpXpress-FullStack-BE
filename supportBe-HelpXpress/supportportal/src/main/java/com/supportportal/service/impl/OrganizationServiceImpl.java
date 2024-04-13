@@ -9,6 +9,7 @@ import com.supportportal.repository.users.SpecialUserRepository;
 import com.supportportal.repository.users.UserRepository;
 import com.supportportal.service.inter.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -102,6 +103,14 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     public Organization findOrganizationById(Long organizationId) {
         return organizationRepository.findById(organizationId).orElse(null);
+    }
+    public List<Organization> findOrganizationsByUsername(String username) {
+        SpecialUser specialUser = specialUserRepository.findByUserUsername(username);
+        if (specialUser != null) {
+            return specialUser.getOrganization(); // This assumes you have a getter for the organizations list in your SpecialUser entity
+        } else {
+            throw new UsernameNotFoundException("User not found with username: " + username);
+        }
     }
 
 }
