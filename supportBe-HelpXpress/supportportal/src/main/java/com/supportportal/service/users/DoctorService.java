@@ -7,9 +7,11 @@ import com.supportportal.repository.users.DoctorRepository;
 import com.supportportal.repository.users.SpecialUserRepository;
 import com.supportportal.repository.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -69,5 +71,13 @@ public class DoctorService {
                 doctorRepository.save(doctor);
             }
         });
+    }
+    public SpecialUser findSpecialUserByDoctorUsername(String username) {
+        Doctor doctor = doctorRepository.findByUserUsername(username);
+        if (doctor != null) {
+            return doctor.getSpecialUser();
+        } else {
+            throw new UsernameNotFoundException("Doctor with username " + username + " not found");
+        }
     }
 }

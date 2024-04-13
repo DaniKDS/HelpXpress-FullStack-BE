@@ -289,5 +289,13 @@ public class UserController extends ExceptionHandling {
         }
     }
 
-
+    @GetMapping("/doctors/{username}/special-user")
+    public ResponseEntity<SpecialUser> getSpecialUserByDoctorUsername(@PathVariable String username) {
+        try {
+            SpecialUser specialUser = doctorService.findSpecialUserByDoctorUsername(username);
+            return new ResponseEntity<>(specialUser, HttpStatus.OK);
+        } catch (UsernameNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }
