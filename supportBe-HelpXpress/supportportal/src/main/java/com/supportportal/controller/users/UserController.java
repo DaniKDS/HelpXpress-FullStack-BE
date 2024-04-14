@@ -282,6 +282,15 @@ public class UserController extends ExceptionHandling {
         List<Doctor> doctors = specialUserService.findDoctorsBySpecialUserUsername(username);
         return ResponseEntity.ok(doctors);
     }
+    @GetMapping("/assistant/{assistantUsername}/special-user/doctors")
+    public ResponseEntity<List<Doctor>> getDoctorsForSpecialUserOfAssistant(@PathVariable String assistantUsername) {
+        SpecialUser specialUser = assistantService.findSpecialUserByAssistantUsername(assistantUsername);
+        if (specialUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+        List<Doctor> doctors = specialUserService.findDoctorsBySpecialUserId(specialUser.getId());
+        return ResponseEntity.ok(doctors);
+    }
 
     @GetMapping("/special-users/{username}/assistant")
     public ResponseEntity<Assistant> getAssistantBySpecialUserUsername(@PathVariable String username) {

@@ -127,4 +127,8 @@ public class SpecialUserService {
         }
         return null;
     }
+
+    public List<Doctor> findDoctorsBySpecialUserId(Long id) {
+        return doctorRepository.findBySpecialUserId(id);
+    }
 }

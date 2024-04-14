@@ -1,6 +1,7 @@
 package com.supportportal.service.users;
 
 import com.supportportal.domain.Assistant;
+import com.supportportal.domain.SpecialUser;
 import com.supportportal.domain.User;
 import com.supportportal.repository.users.AssistantRepository;
 import com.supportportal.repository.users.UserRepository;
@@ -55,5 +56,13 @@ public class AssistantService {
 
     public Assistant findAssistantByUserId(Long id) {
         return (Assistant) assistantRepository.findByUserId(id).orElse(null);
+    }
+
+    public SpecialUser findSpecialUserByAssistantUsername(String assistantUsername) {
+        Optional<Assistant> assistant = assistantRepository.findByUserUsername(assistantUsername);
+        if (assistant.isPresent()) {
+            return assistant.get().getSpecialUser();
+        }
+        return null;
     }
 }

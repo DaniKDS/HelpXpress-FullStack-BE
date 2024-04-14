@@ -15,4 +15,6 @@ public interface AssistantRepository extends JpaRepository<Assistant, Long> {
     @Query("SELECT su.id FROM Assistant su")
     List<Long> findAllIds();
     Assistant findBySpecialuser_Id(Long id);
+
+    Optional<Assistant> findByUserUsername(String assistantUsername);
 }
