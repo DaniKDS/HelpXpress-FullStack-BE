@@ -40,4 +40,7 @@ public class Assistant implements Serializable {
     @JsonIgnore
     private SpecialUser specialuser;
 
+    public SpecialUser getSpecialUser() {
+        return specialuser;
+    }
 }

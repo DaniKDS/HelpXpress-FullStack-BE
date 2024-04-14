@@ -42,6 +42,7 @@ public class SpecialUser implements Serializable {
     private List<Doctor> doctors;
 
     @OneToOne(cascade = CascadeType.ALL)
+    @JsonIgnore
     @JoinColumn(name = "assistant_id")
     private Assistant assistant;
 

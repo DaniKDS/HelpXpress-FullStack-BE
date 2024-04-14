@@ -52,4 +52,8 @@ public class AssistantService {
     public Assistant findAssistantById(Long assistantId) {
         return assistantRepository.findById(assistantId).orElse(null);
     }
+
+    public Assistant findAssistantByUserId(Long id) {
+        return (Assistant) assistantRepository.findByUserId(id).orElse(null);
+    }
 }

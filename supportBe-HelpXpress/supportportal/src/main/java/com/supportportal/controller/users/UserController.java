@@ -5,6 +5,8 @@ import com.supportportal.domain.Http.HttpResponse;
 import com.supportportal.domain.principal.UserPrincipal;
 import com.supportportal.exception.ExceptionHandling;
 import com.supportportal.exception.domain.*;
+import com.supportportal.repository.users.AssistantRepository;
+import com.supportportal.repository.users.UserRepository;
 import com.supportportal.service.impl.OrganizationServiceImpl;
 import com.supportportal.service.inter.UserService;
 import com.supportportal.service.users.AssistantService;
@@ -124,6 +126,18 @@ public class UserController extends ExceptionHandling {
     public ResponseEntity<List<Assistant>> getAllAssistants() {
         List<Assistant> assistants = assistantService.findAllAssistants();
         return new ResponseEntity<>(assistants, HttpStatus.OK);
+    }
+
+    @GetMapping("/assistant/{username}/patient")
+    public ResponseEntity<SpecialUser> getSpecialUserByAssistantUsername(@PathVariable("username") String username) {
+        User user = userService.findUserByUsername(username);
+        if (user != null) {
+            Assistant assistant = assistantService.findAssistantByUserId(user.getId());
+            if (assistant != null && assistant.getSpecialUser() != null) {
+                return new ResponseEntity<>(assistant.getSpecialUser(), HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/assistant/{assistantId}")
