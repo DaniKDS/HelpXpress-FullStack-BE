@@ -50,4 +50,17 @@ public class AppointmentController {
         return new ResponseEntity<>(appointments, HttpStatus.OK);
     }
 
+    @GetMapping("/appointmentsByAssistant/{assistantUsername}")
+    public ResponseEntity<List<Appointment>> getAppointmentsByAssistantUsername(@PathVariable String assistantUsername) {
+        try {
+            List<Appointment> appointments = appointmentService.findAppointmentsByAssistantUsername(assistantUsername);
+            if (appointments.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(appointments, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

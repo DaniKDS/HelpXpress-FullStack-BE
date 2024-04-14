@@ -15,4 +15,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     @Query("SELECT a FROM Appointment a JOIN a.doctor d WHERE d.user.username = :username")
     List<Appointment> findAppointmentsByDoctorUsername(@Param("username") String username);
+
+    @Query("SELECT a FROM Appointment a WHERE a.specialUser.assistant.user.username = :username")
+    List<Appointment> findAppointmentsByAssistantUsername(@Param("username") String username);
 }

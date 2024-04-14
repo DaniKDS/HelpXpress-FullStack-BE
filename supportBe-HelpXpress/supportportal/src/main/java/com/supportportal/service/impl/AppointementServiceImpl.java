@@ -109,4 +109,10 @@ public class AppointementServiceImpl implements AppointmentService {
     public List<Appointment> findBySpecialUserUsername(String username) {
         return appointmentRepository.findBySpecialUserUserUsername(username);
     }
+
+    @Override
+    public List<Appointment> findAppointmentsByAssistantUsername(String username) {
+        // Assuming you have a method to find all appointments for a specific assistant's special users
+        return appointmentRepository.findAppointmentsByAssistantUsername(username);
+    }
 }
