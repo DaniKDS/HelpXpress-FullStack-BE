@@ -1,11 +1,17 @@
-package com.supportportal.controller;
+package com.supportportal.controller.users;
 
-import com.supportportal.domain.HttpResponse;
-import com.supportportal.domain.User;
-import com.supportportal.domain.UserPrincipal;
+import com.supportportal.domain.*;
+import com.supportportal.domain.Http.HttpResponse;
+import com.supportportal.domain.principal.UserPrincipal;
 import com.supportportal.exception.ExceptionHandling;
 import com.supportportal.exception.domain.*;
-import com.supportportal.service.UserService;
+import com.supportportal.repository.users.AssistantRepository;
+import com.supportportal.repository.users.UserRepository;
+import com.supportportal.service.impl.OrganizationServiceImpl;
+import com.supportportal.service.inter.UserService;
+import com.supportportal.service.users.AssistantService;
+import com.supportportal.service.users.DoctorService;
+import com.supportportal.service.users.SpecialUserService;
 import com.supportportal.utility.JWTTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -14,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,6 +33,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 import static com.supportportal.constant.FileConstant.*;
 import static com.supportportal.constant.SecurityConstant.JWT_TOKEN_HEADER;
@@ -39,12 +47,21 @@ public class UserController extends ExceptionHandling {
     public static final String USER_DELETED_SUCCESSFULLY = "User deleted successfully";
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
+    private final AssistantService assistantService;
+    private final DoctorService doctorService;
+    private final SpecialUserService specialUserService;
+
+    private final OrganizationServiceImpl organizationServiceImpl;
     private final JWTTokenProvider jwtTokenProvider;
 
     @Autowired
-    public UserController(AuthenticationManager authenticationManager, UserService userService, JWTTokenProvider jwtTokenProvider) {
+    public UserController(AuthenticationManager authenticationManager, UserService userService, AssistantService assistantService, DoctorService doctorService, SpecialUserService specialPersonService, SpecialUserService specialUserService, OrganizationServiceImpl organizationServiceImpl, JWTTokenProvider jwtTokenProvider) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
+        this.assistantService = assistantService;
+        this.doctorService = doctorService;
+        this.specialUserService = specialUserService;
+        this.organizationServiceImpl = organizationServiceImpl;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
@@ -82,11 +99,14 @@ public class UserController extends ExceptionHandling {
                                        @RequestParam("lastName") String lastName,
                                        @RequestParam("username") String username,
                                        @RequestParam("email") String email,
+                                       @RequestParam("gender") String gender,
+                                       @RequestParam("phone") String phone,
                                        @RequestParam("role") String role,
                                        @RequestParam("isActive") String isActive,
                                        @RequestParam("isNonLocked") String isNonLocked,
                                        @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
-        User updatedUser = userService.updateUser(currentUsername, firstName, lastName, username,email, role, Boolean.parseBoolean(isNonLocked), Boolean.parseBoolean(isActive), profileImage);
+        User updatedUser;
+        updatedUser = userService.updateUser(currentUsername, firstName, lastName, username,email,gender,phone, role, Boolean.parseBoolean(isNonLocked), Boolean.parseBoolean(isActive), profileImage);
         return new ResponseEntity<>(updatedUser, OK);
     }
     
@@ -100,6 +120,54 @@ public class UserController extends ExceptionHandling {
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getUsers();
         return new ResponseEntity<>(users, OK);
+    }
+
+    @GetMapping("/assistant")
+    public ResponseEntity<List<Assistant>> getAllAssistants() {
+        List<Assistant> assistants = assistantService.findAllAssistants();
+        return new ResponseEntity<>(assistants, HttpStatus.OK);
+    }
+
+    @GetMapping("/assistant/{username}/patient")
+    public ResponseEntity<SpecialUser> getSpecialUserByAssistantUsername(@PathVariable("username") String username) {
+        User user = userService.findUserByUsername(username);
+        if (user != null) {
+            Assistant assistant = assistantService.findAssistantByUserId(user.getId());
+            if (assistant != null && assistant.getSpecialUser() != null) {
+                return new ResponseEntity<>(assistant.getSpecialUser(), HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/assistant/{assistantId}")
+    public ResponseEntity<Assistant> getAssistant(@PathVariable("assistantId") Long assistantId) {
+        Assistant assistant = assistantService.findAssistantById(assistantId);
+        return new ResponseEntity<>(assistant, HttpStatus.OK);
+    }
+
+    @GetMapping("/doctor")
+    public ResponseEntity<List<Doctor>> getAllDoctors() {
+        List<Doctor> doctors = doctorService.findAllDoctors();
+        return new ResponseEntity<>(doctors, HttpStatus.OK);
+    }
+
+    @GetMapping("/doctor/{doctorId}")
+    public ResponseEntity<Doctor> getDoctor(@PathVariable("doctorId") Long doctorId) {
+        Doctor doctor = doctorService.findDoctorById(doctorId);
+        return new ResponseEntity<>(doctor, HttpStatus.OK);
+    }
+
+    @GetMapping("/specialPerson")
+    public ResponseEntity<List<SpecialUser>> getAllSpecialPersons() {
+        List<SpecialUser> specialPersons = specialUserService.findAllSpecialUsers();
+        return new ResponseEntity<>(specialPersons, HttpStatus.OK);
+    }
+
+    @GetMapping("/specialPerson/{specialUserId}")
+    public ResponseEntity<SpecialUser> getSpecialPerson(@PathVariable("specialUserId") Long specialUserId) {
+        SpecialUser specialPerson = specialUserService.findSpecialUserById(specialUserId);
+        return new ResponseEntity<>(specialPerson, HttpStatus.OK);
     }
 
     @GetMapping("/resetpassword/{email}")
@@ -156,11 +224,10 @@ public class UserController extends ExceptionHandling {
     }
 
     @PostMapping("/addManyUsers")
-    //@PreAuthorize("hasAnyAuthority('role:admin')")
     public ResponseEntity<HttpResponse> addManyUsers() {
         try {
             userService.saveManyUsers();
-            return response(OK, "50 de utilizatori au fost adăugați cu succes.");
+            return response(OK, "80 de utilizatori au fost adăugați cu succes.");
         } catch (Exception e) {
             LOGGER.error("Eroare la adăugarea utilizatorilor: ", e);
             return response(INTERNAL_SERVER_ERROR, "A apărut o eroare la adăugarea utilizatorilor.");
@@ -174,6 +241,95 @@ public class UserController extends ExceptionHandling {
             return ResponseEntity.ok("Ultimii 100 de utilizatori au fost șterși cu succes.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("A apărut o eroare la ștergerea utilizatorilor.");
+        }
+    }
+
+    @PostMapping("/addManyAssistants")
+    public ResponseEntity<HttpResponse> addManyAssistants() {
+        try {
+            assistantService.saveManyAssistants();
+            return response(OK, "Asistenții au fost adăugați cu succes.");
+        } catch (Exception e) {
+            LOGGER.error("Eroare la adăugarea asistenților: ", e);
+            return response(INTERNAL_SERVER_ERROR, "A apărut o eroare la adăugarea asistenților.");
+        }
+    }
+
+    @PostMapping("/addManyDoctors")
+    public ResponseEntity<HttpResponse> addManyDoctors() {
+        try {
+            doctorService.saveManyDoctors();
+            return response(OK, "Doctorii au fost adăugați cu succes.");
+        } catch (Exception e) {
+            LOGGER.error("Eroare la adăugarea doctorilor: ", e);
+            return response(INTERNAL_SERVER_ERROR, "A apărut o eroare la adăugarea doctorilor.");
+        }
+    }
+
+    @PostMapping("/addManySpecialUsers")
+    public ResponseEntity<HttpResponse> addManySpecialUsers() {
+        try {
+            specialUserService.saveManySpecialUsers();
+            return response(OK, "Utilizatorii speciali au fost adăugați cu succes.");
+        } catch (Exception e) {
+            LOGGER.error("Eroare la adăugarea utilizatorilor speciali: ", e);
+            return response(INTERNAL_SERVER_ERROR, "A apărut o eroare la adăugarea utilizatorilor speciali.");
+        }
+    }
+
+    @GetMapping("/special-users/by-username/{username}/doctors")
+    public ResponseEntity<List<Doctor>> getDoctorsBySpecialUserUsername(@PathVariable String username) {
+        List<Doctor> doctors = specialUserService.findDoctorsBySpecialUserUsername(username);
+        return ResponseEntity.ok(doctors);
+    }
+    @GetMapping("/assistant/{assistantUsername}/special-user/doctors")
+    public ResponseEntity<List<Doctor>> getDoctorsForSpecialUserOfAssistant(@PathVariable String assistantUsername) {
+        SpecialUser specialUser = assistantService.findSpecialUserByAssistantUsername(assistantUsername);
+        if (specialUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+        List<Doctor> doctors = specialUserService.findDoctorsBySpecialUserId(specialUser.getId());
+        return ResponseEntity.ok(doctors);
+    }
+
+    @GetMapping("/special-users/{username}/assistant")
+    public ResponseEntity<Assistant> getAssistantBySpecialUserUsername(@PathVariable String username) {
+        try {
+            Assistant assistant = specialUserService.findAssistantBySpecialUserUsername(username);
+            return new ResponseEntity<>(assistant, HttpStatus.OK);
+        } catch (UsernameNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/special-users/{username}/organizations")
+    public ResponseEntity<List<Organization>> getOrganizationsByUsername(@PathVariable String username) {
+        try {
+            List<Organization> organizations = organizationServiceImpl.findOrganizationsByUsername(username);
+            return new ResponseEntity<>(organizations, HttpStatus.OK);
+        } catch (UsernameNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/doctors/{username}/special-user")
+    public ResponseEntity<SpecialUser> getSpecialUserByDoctorUsername(@PathVariable String username) {
+        try {
+            SpecialUser specialUser = doctorService.findSpecialUserByDoctorUsername(username);
+            return new ResponseEntity<>(specialUser, HttpStatus.OK);
+        } catch (UsernameNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/doctors/{username}/appointments")
+    public ResponseEntity<List<Appointment>> getAppointmentsByDoctorUsername(@PathVariable String username) {
+        try {
+            List<Appointment> appointments = doctorService.findAppointmentsByDoctorUsername(username);
+            return new ResponseEntity<>(appointments, HttpStatus.OK);
+        } catch (Exception e) {
+            // Log the exception details here
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.supportportal.service;
+package com.supportportal.service.inter;
 
 import com.supportportal.domain.User;
 import com.supportportal.exception.domain.*;
@@ -20,7 +20,7 @@ public interface UserService {
 
     User addNewUser(String firstName, String lastName, String username, String email, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException;
 
-    User updateUser(String currentUsername, String newFirstName, String newLastName, String newUsername, String newEmail, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException;
+    User updateUser(String currentUsername, String newFirstName, String newLastName, String newUsername, String newEmail, String gender, String role, String s, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException;
 
     void deleteUser(String username) throws IOException;
     void deleteLast100Users();
@@ -29,6 +29,6 @@ public interface UserService {
 
     User updateProfileImage(String username, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException;
 
-    User addNewUser1(String firstName, String lastName, String username, String email, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage, String encryptedPassword) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException;
     void saveManyUsers() throws UserNotFoundException, EmailExistException, IOException, UsernameExistException, NotAnImageFileException;
+
 }

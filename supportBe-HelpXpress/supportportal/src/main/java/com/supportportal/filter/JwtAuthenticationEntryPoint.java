@@ -1,7 +1,7 @@
 package com.supportportal.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.supportportal.domain.HttpResponse;
+import com.supportportal.domain.Http.HttpResponse;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;

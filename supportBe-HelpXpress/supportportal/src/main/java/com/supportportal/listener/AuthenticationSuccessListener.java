@@ -1,7 +1,6 @@
 package com.supportportal.listener;
 
-import com.supportportal.domain.User;
-import com.supportportal.domain.UserPrincipal;
+import com.supportportal.domain.principal.UserPrincipal;
 import com.supportportal.service.LoginAttemptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;

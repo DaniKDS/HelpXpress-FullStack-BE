@@ -1,13 +1,12 @@
-package com.supportportal.service.impl;
+package com.supportportal.service.users;
 
 import com.supportportal.domain.User;
-import com.supportportal.domain.UserPrincipal;
+import com.supportportal.domain.principal.UserPrincipal;
 import com.supportportal.enumeration.Role;
 import com.supportportal.exception.domain.*;
-import com.supportportal.repository.UserRepository;
+import com.supportportal.repository.users.UserRepository;
 import com.supportportal.service.EmailService;
 import com.supportportal.service.LoginAttemptService;
-import com.supportportal.service.UserService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
@@ -30,10 +29,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static com.supportportal.constant.FileConstant.*;
 import static com.supportportal.constant.FileConstant.NOT_AN_IMAGE_FILE;
@@ -46,7 +42,7 @@ import static org.springframework.http.MediaType.*;
 @Service
 @Transactional
 @Qualifier("userDetailsService")
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserService implements com.supportportal.service.inter.UserService, UserDetailsService {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -54,7 +50,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final EmailService emailService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, LoginAttemptService loginAttemptService, EmailService emailService) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, LoginAttemptService loginAttemptService, EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.loginAttemptService = loginAttemptService;
@@ -125,33 +121,38 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     // Adaugă `String encryptedPassword` ca parametru la metoda addNewUser1
-    public User addNewUser1(String firstName, String lastName, String username, String email, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage, String encryptedPassword) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
-        validateNewUsernameAndEmail(EMPTY, username, email);
+    public User addNewUser1(String firstName, String lastName, String username, String email, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage, String encryptedPassword, Integer age, String phone, Date birthDate, String gender) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
+        validateNewUsernameAndEmail("", username, email);
         User user = new User();
-        // Folosește parola criptată primită ca parametru
         user.setUserId(generateUserId());
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setJoinDate(new Date());
         user.setUsername(username);
         user.setEmail(email);
-        user.setPassword(encryptedPassword); // Setează parola criptată
+        user.setPassword(encryptedPassword);
         user.setActive(isActive);
         user.setNotLocked(isNonLocked);
         user.setRole(getRoleEnumName(role).name());
         user.setAuthorities(getRoleEnumName(role).getAuthorities());
         user.setProfileImageUrl(getTemporaryProfileImageUrl(username));
+        user.setAge(age);
+        user.setPhone(phone);
+        user.setBirthDate(birthDate);
+        user.setGender(gender);
         userRepository.save(user);
         saveProfileImage(user, profileImage);
-        LOGGER.info("New user password for " + username + ": 1234"); // Loghează parola ca referință, dar în producție ar fi bine să eviți asta
+        LOGGER.info("New user password for " + username + ": 1234"); // Consider adjusting or removing for production
         return user;
     }
     public void saveManyUsers() throws UserNotFoundException, EmailExistException, IOException, UsernameExistException, NotAnImageFileException {
         String[] firstNames = {"Ion", "Vasile", "Claudiu", "Mihai", "Andrei", "Alexandru", "Dumitru",
-            "Stefan", "Daniel", "Adrian", "Viorel", "Marcel", "Cristian", "Catalin", "Marius", "George"};
+            "Stefan", "Daniel", "Adrian", "Viorel", "Marcel", "Cristian", "Catalin", "Marius", "George", "Antonia", "Maria",
+            "Ioana", "Andreea", "Elena", "Cristina", "Ana", "Diana", "Laura", "Alina", "Gabriela", "Iulia", "Raluca", "Simona"};
         String[] lastNames = {"Popescu", "Ionescu", "Nicolae", "Dumitrescu", "Mihai", "Andrei",
             "Alexandrescu", "Stoica", "Constantin", "Marin", "Molnar", "Marian", "Petrescu", "Popa", "Gheorghe", "Dumitrache"};
-        String[] roles = {"ROLE_USER", "ROLE_ADMIN"};
+        String[] roles = {"ROLE_USER","ROLE_ADMIN", "ROLE_DOCTOR", "ROLE_ASSISTANT"};
+        String[] genders = {"Barbat", "Femeie"};
         Random random = new Random();
         boolean isNonLocked = true;
         boolean isActive = true;
@@ -164,9 +165,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         // Generează un timestamp pentru a asigura unicitatea username-ului și a email-ului
         long currentTimeMillis = System.currentTimeMillis();
 
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 80; i++) {
+
+            Integer age = random.nextInt(60) + 1; // Vârsta între 1 și 77
             String firstName = firstNames[random.nextInt(firstNames.length)];
             String lastName = lastNames[random.nextInt(lastNames.length)];
+            String phone = "0700000000" + i; // Exemplu de generare număr de telefon
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.YEAR, -age); // Data nașterii bazată pe vârstă
+            Date birthDate = cal.getTime();
+            String gender = genders[random.nextInt(genders.length)];
 
             // Construiește username-uri și email-uri unice folosind timestamp-ul și indexul
             String username = "user" + i;
@@ -174,20 +182,23 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             String role = roles[random.nextInt(roles.length)];
 
             // Apelează metoda pentru adăugarea unui nou utilizator cu valorile generate
-            addNewUser1(firstName, lastName, username, email, role, isNonLocked, isActive, profileImage, encryptedPassword);
+            addNewUser1(firstName, lastName, username, email, role, isNonLocked, isActive, profileImage, encryptedPassword, age, phone, birthDate, gender);
         }
     }
+
     public void deleteLast100Users() {
         List<User> usersToDelete = userRepository.findTop100ByOrderByJoinDateDesc(); // Obține utilizatorii
         userRepository.deleteAll(usersToDelete); // Șterge utilizatorii
     }
 
     @Override
-    public User updateUser(String currentUsername, String newFirstName, String newLastName, String newUsername, String newEmail, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
+    public User updateUser(String currentUsername, String newFirstName, String newLastName, String newUsername, String newEmail,String gender,String phone,  String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
         User currentUser = validateNewUsernameAndEmail(currentUsername, newUsername, newEmail);
         currentUser.setFirstName(newFirstName);
         currentUser.setLastName(newLastName);
         currentUser.setUsername(newUsername);
+        currentUser.setGender(gender);
+        currentUser.setPhone(phone);
         currentUser.setEmail(newEmail);
         currentUser.setActive(isActive);
         currentUser.setNotLocked(isNonLocked);
@@ -217,7 +228,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         saveProfileImage(user, profileImage);
         return user;
     }
-
 
     @Override
     public List<User> getUsers() {

@@ -1,14 +1,20 @@
 package com.supportportal.service.impl;
 
 import com.supportportal.domain.Review;
-import com.supportportal.domain.User;
+import com.supportportal.repository.OrganizationRepository;
 import com.supportportal.repository.ReviewRepository;
-import com.supportportal.repository.UserRepository;
-import com.supportportal.service.ReviewService;
+import com.supportportal.repository.users.AssistantRepository;
+import com.supportportal.repository.users.DoctorRepository;
+import com.supportportal.repository.users.SpecialUserRepository;
+import com.supportportal.repository.users.UserRepository;
+import com.supportportal.service.inter.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -21,7 +27,16 @@ public class ReviewServiceImpl implements ReviewService {
     private ReviewRepository reviewRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private SpecialUserRepository specialUserRepository;
+
+    @Autowired
+    private OrganizationRepository organizationRepository;
+
+    @Autowired
+    private DoctorRepository doctorRepository;
+
+    @Autowired
+    private AssistantRepository assistantRepository;
 
     private static final String[] COMMENTS = {
         "Accesibilitatea aplicației este excelentă.",
@@ -50,20 +65,126 @@ public class ReviewServiceImpl implements ReviewService {
         "Accesul la consultanță profesională prin intermediul aplicației este un mare avantaj.",
         "Funcționalitățile pentru gestionarea stresului și anxietății sunt bine gândite.",
     };
+    private Random random = new Random();
+    public void addRandomReviews() {
+        // Presupunem că există metode care îți returnează o listă cu id-urile valide pentru fiecare entitate
+        List<Long> specialUserIds = getValidSpecialUserIds();
+        List<Long> organizationIds = getValidOrganizationIds();
+        List<Long> doctorIds = getValidDoctorIds();
+        List<Long> assistantIds = getValidAssistantIds();
 
-
-    @Override
-    public void addBulkReviews() throws Exception {
-        List<User> users = userRepository.findAll(); // Presupunând că ai această metodă
-        Random random = new Random();
-
+        // Creăm un număr specificat de recenzii
         for (int i = 0; i < 100; i++) {
             Review review = new Review();
-            review.setUser(users.get(random.nextInt(users.size()))); // Alege un utilizator aleatoriu
-            review.setComment(COMMENTS[random.nextInt(COMMENTS.length)]); // Alege un comentariu aleatoriu
-            review.setRating(random.nextInt(5) + 1); // Alege un rating între 1 și 5
-            review.setReviewDate(new Date()); // Setează data curentă pentru recenzie
+
+            // Alege id-uri aleatorii pentru fiecare entitate implicată în recenzie
+            Long specialUserId = pickRandomId(specialUserIds);
+            Long organizationId = pickRandomId(organizationIds);
+            Long doctorId = pickRandomId(doctorIds);
+            Long assistantId = pickRandomId(assistantIds);
+
+            // Validate and set the foreign keys if the IDs are valid
+            if (specialUserId != null && specialUserRepository.existsById(specialUserId)) {
+                review.setSpecialUserId(specialUserId);
+            }
+            if (organizationId != null && organizationRepository.existsById(organizationId)) {
+                review.setOrganizationId(organizationId);
+            } else {
+                continue; // Skip to the next iteration if the organization ID is not valid
+            }
+            if (doctorId != null && doctorRepository.existsById(doctorId)) {
+                review.setDoctorId(doctorId);
+            }
+            if (assistantId != null && assistantRepository.existsById(assistantId)) {
+                review.setAssistantId(assistantId);
+            }
+
+            // Alege un comentariu aleatoriu
+            String comment = COMMENTS[random.nextInt(COMMENTS.length)];
+
+            // Alege un rating aleatoriu între 1 și 5
+            int rating = random.nextInt(5) + 1;
+
+            // Setează data recenziei la o dată aleatoare recentă
+            LocalDate reviewLocalDate = LocalDate.now().minusDays(random.nextInt(365));
+            Date reviewDate = Date.from(reviewLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+            // Setăm datele alese pentru recenzie
+            review.setComment(comment);
+            review.setRating(rating);
+            review.setReviewDate(reviewDate);
+
+            // Save the review if all foreign keys are valid
             reviewRepository.save(review);
         }
+    }
+    public void createReviewWithValidOrganization() {
+        // Retrieve all valid organization IDs
+        List<Long> validOrganizationIds = organizationRepository.findAllIds();
+
+        // Ensure that the list is not empty
+        if (validOrganizationIds.isEmpty()) {
+            throw new IllegalStateException("No organizations available to review.");
+        }
+
+        // Logic to select a valid organization ID - for example, picking one at random
+        Long validOrganizationId = 235L; // pickRandomId(validOrganizationIds);
+
+        // Create a new Review instance
+        Review review = new Review();
+
+        // Set the organization ID to a valid ID
+        review.setOrganizationId(validOrganizationId);
+
+        // Set other properties for the review
+        review.setComment("Great organization with excellent services.");
+        review.setRating(5); // Random rating between 1 and 5
+        review.setReviewDate(new Date()); // Current date for the review
+
+        // Set foreign keys to null or to valid existing IDs
+        review.setDoctorId(181L); // Assuming this can be null if not reviewing a doctor
+        review.setSpecialUserId(180L); // Assuming this can be null if not linked to a special user
+        review.setAssistantId(131L); // Assuming this can be null if not linked to an assistant
+
+        // Save the review
+        reviewRepository.save(review);
+    }
+
+
+    private Long pickRandomId(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return null;
+        }
+        return ids.get(random.nextInt(ids.size()));
+    }
+
+    // Trebuie să implementezi metodele de a obține id-urile valide pentru fiecare entitate
+    private List<Long> getValidSpecialUserIds() {
+        return specialUserRepository.findAllIds();
+    }
+
+
+
+    private List<Long> getValidOrganizationIds() {
+        return organizationRepository.findAllIds();
+    }
+
+    private List<Long> getValidDoctorIds() {
+        return doctorRepository.findAllIds();
+    }
+
+    private List<Long> getValidAssistantIds() {
+        return assistantRepository.findAllIds();
+    }
+
+    public List<Review> findAllReviews() {
+        return reviewRepository.findAll();
+    }
+    public Review findReviewById(Long reviewId) {
+        return reviewRepository.findById(reviewId).orElse(null);
+    }
+
+    public List<Review> findAllReviewsByDoctorUsername(String username) {
+        return reviewRepository.findAllByDoctorUsername(username);
     }
 }
