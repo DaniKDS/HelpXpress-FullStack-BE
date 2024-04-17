@@ -124,11 +124,11 @@ public class JobServiceImpl{
         }
 
         // Generarea numelui jobului bazat pe tipul de dizabilitate și index
-        return jobPrefixes[index % jobPrefixes.length] + " pentru persoane cu dizabilități " + disabilityType;
+        return jobPrefixes[index % jobPrefixes.length] + " pentru persoană cu dizabilitate: " + disabilityType;
     }
 
     private String generateJobDescription(String disabilityType) {
-        String descriptionTemplate = "Oportunitate pentru persoane cu dizabilități %s. Sprijinim integrarea profesională în domeniul %s.";
+        String descriptionTemplate = "Oportunitate pentru persoana cu dizabilitate %s. Sprijinim integrarea profesională în domeniul %s.";
         String[] fields = {"IT", "educație", "servicii client", "administrație", "vânzări", "tehnic"};
         Random rand = new Random();
         return String.format(descriptionTemplate, disabilityType, fields[rand.nextInt(fields.length)]);
