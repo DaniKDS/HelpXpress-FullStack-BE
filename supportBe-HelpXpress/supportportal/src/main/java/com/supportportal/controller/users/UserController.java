@@ -5,8 +5,6 @@ import com.supportportal.domain.Http.HttpResponse;
 import com.supportportal.domain.principal.UserPrincipal;
 import com.supportportal.exception.ExceptionHandling;
 import com.supportportal.exception.domain.*;
-import com.supportportal.repository.users.AssistantRepository;
-import com.supportportal.repository.users.UserRepository;
 import com.supportportal.service.impl.OrganizationServiceImpl;
 import com.supportportal.service.inter.UserService;
 import com.supportportal.service.users.AssistantService;
@@ -33,7 +31,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Optional;
 
 import static com.supportportal.constant.FileConstant.*;
 import static com.supportportal.constant.SecurityConstant.JWT_TOKEN_HEADER;
