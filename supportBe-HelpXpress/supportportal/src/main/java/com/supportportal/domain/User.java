@@ -42,4 +42,12 @@ public class User implements Serializable {
     private Date birthDate;
     private String gender;
 
+    // Relația Many-to-Many cu Benzinarie
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "user_benzinarie",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "benzinarie_id")
+    )
+    private List<Benzinarie> benzinarii;
 }
