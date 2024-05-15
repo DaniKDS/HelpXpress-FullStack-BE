@@ -1,6 +1,6 @@
 package com.supportportal.service.impl;
 
-import com.supportportal.domain.Benzinarie;
+import com.supportportal.domain.GazStation;
 import com.supportportal.repository.BenzinarieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,14 +15,14 @@ public class BenzinarieServiceImpl {
     @Autowired
     private BenzinarieRepository benzinarieRepository;
 
-    public List<Benzinarie> getAllBenzinarii() {
+    public List<GazStation> getAllBenzinarii() {
         return benzinarieRepository.findAll();
     }
 
     public void generateRandomBenzinarii() {
         String[] brands = {"MOL", "PETROM", "ROMPETROL", "SOCAR", "OMW", "LUKOIL", "VEGAS", "GAZPROM"};
         Random random = new Random();
-        List<Benzinarie> benzinarii = new ArrayList<>();
+        List<GazStation> benzinarii = new ArrayList<>();
 
         for (int i = 0; i < 50; i++) {
             // Generarea numărului de telefon
@@ -31,7 +31,7 @@ public class BenzinarieServiceImpl {
             // Actualizarea generării adresei de email
             String email = "benzinarie" + (i + 1) + "@peco.ro"; // Generare email în formatul specificat
 
-            Benzinarie benzinarie = Benzinarie.builder()
+            GazStation benzinarie = GazStation.builder()
                 .nume(brands[random.nextInt(brands.length)] + " Benzinăria " + (i + 1))
                 .locatie("Locatie " + (i + 1))
                 .brand(brands[random.nextInt(brands.length)])

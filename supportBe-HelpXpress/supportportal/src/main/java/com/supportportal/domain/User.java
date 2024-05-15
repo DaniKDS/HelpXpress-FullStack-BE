@@ -49,5 +49,5 @@ public class User implements Serializable {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "benzinarie_id")
     )
-    private List<Benzinarie> benzinarii;
+    private List<GazStation> benzinarii;
 }

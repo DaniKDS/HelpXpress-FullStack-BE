@@ -1,6 +1,6 @@
 package com.supportportal.controller;
 
-import com.supportportal.domain.Benzinarie;
+import com.supportportal.domain.GazStation;
 import com.supportportal.service.impl.BenzinarieServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +16,8 @@ public class BenzinarieController {
     private BenzinarieServiceImpl benzinarieService;
 
     @GetMapping
-    public ResponseEntity<List<Benzinarie>> getAllBenzinarii() {
-        List<Benzinarie> benzinarii = benzinarieService.getAllBenzinarii();
+    public ResponseEntity<List<GazStation>> getAllBenzinarii() {
+        List<GazStation> benzinarii = benzinarieService.getAllBenzinarii();
         return ResponseEntity.ok(benzinarii);
     }
 
