@@ -25,4 +25,7 @@ public class GazStation implements Serializable {
 
     @ManyToMany(mappedBy = "benzinarii")
     private List<User> users;
+    public Object getName() {
+        return nume;
+    }
 }

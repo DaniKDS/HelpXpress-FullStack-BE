@@ -1,6 +1,7 @@
 package com.supportportal.service;
 
 import com.sun.mail.smtp.SMTPTransport;
+import com.supportportal.domain.GazStation;
 import org.springframework.stereotype.Service;
 
 import javax.mail.Message;
@@ -9,6 +10,7 @@ import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Date;
+import java.util.Map;
 import java.util.Properties;
 
 import static com.supportportal.constant.EmailConstant.*;
@@ -46,5 +48,44 @@ public class EmailService {
         properties.put(SMTP_STARTTLS_ENABLE, true);
         properties.put(SMTP_STARTTLS_REQUIRED, true);
         return Session.getInstance(properties, null);
+    }
+
+    public void createAssistanceRequestEmail(Map<String, Object> requestDetails) throws MessagingException {
+        String email = (String) requestDetails.get("email");
+        String carNumber = (String) requestDetails.get("carNumber");
+        String carColor = (String) requestDetails.get("carColor");
+        String fuelType = (String) requestDetails.get("fuelType");
+        String phoneNumber = (String) requestDetails.get("phoneNumber");
+        String appointmentDate = (String) requestDetails.get("appointmentDate");
+        String appointmentTime = (String) requestDetails.get("appointmentTime");
+        boolean arrivalConfirmation = (Boolean) requestDetails.get("arrivalConfirmation");
+
+        Message message = new MimeMessage(getEmailSession());
+        message.setFrom(new InternetAddress(FROM_EMAIL));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email, false));
+        message.setSubject("Cerere Asistență Benzinărie");
+
+        String emailContent = String.format(
+            "Bună ziua!\n\nS-a efectuat o programare de asistență pentru o persoană cu dizabilități.\n\nDetalii programare:\n" +
+                "- Număr mașină: %s\n" +
+                "- Culoare mașină: %s\n" +
+                "- Tip combustibil: %s\n" +
+                "- Număr de telefon: %s\n" +
+                "- Data programării: %s\n" +
+                "- Ora programării: %s\n" +
+                "- Sosesc în aproximativ 30 de minute +/-: %s\n\n" +
+                "Cu respect,\nEchipa HelpXpress",
+            carNumber, carColor, fuelType, phoneNumber, appointmentDate, appointmentTime,
+            arrivalConfirmation ? "Da" : "Nu"
+        );
+
+        message.setText(emailContent);
+        message.setSentDate(new Date());
+        message.saveChanges();
+
+        SMTPTransport smtpTransport = (SMTPTransport) getEmailSession().getTransport(SIMPLE_MAIL_TRANSFER_PROTOCOL);
+        smtpTransport.connect(GMAIL_SMTP_SERVER, USERNAME, PASSWORD);
+        smtpTransport.sendMessage(message, message.getAllRecipients());
+        smtpTransport.close();
     }
 }

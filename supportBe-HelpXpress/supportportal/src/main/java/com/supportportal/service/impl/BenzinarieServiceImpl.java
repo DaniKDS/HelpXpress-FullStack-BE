@@ -43,4 +43,7 @@ public class BenzinarieServiceImpl {
         benzinarieRepository.saveAll(benzinarii);
     }
 
+    public GazStation findById(Long gazStationId) {
+        return benzinarieRepository.findById(gazStationId).orElse(null);
+    }
 }
