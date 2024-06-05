@@ -1,9 +1,15 @@
 package com.supportportal.controller;
 
 
-import com.supportportal.domain.Appointment;
+import com.supportportal.domain.*;
+import com.supportportal.repository.OrganizationRepository;
+import com.supportportal.repository.users.AssistantRepository;
+import com.supportportal.repository.users.DoctorRepository;
+import com.supportportal.repository.users.SpecialUserRepository;
 import com.supportportal.service.impl.AppointementServiceImpl;
 import com.supportportal.service.inter.AppointmentService;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +27,18 @@ public class AppointmentController {
     public AppointmentController(AppointementServiceImpl appointmentService) {
         this.appointmentService = appointmentService;
     }
+
+    @Autowired
+    private SpecialUserRepository specialUserRepository;
+
+    @Autowired
+    private DoctorRepository doctorRepository;
+
+    @Autowired
+    private OrganizationRepository organizationRepository;
+
+    @Autowired
+    private AssistantRepository assistantRepository;
 
     @PostMapping("/saveManyAppointments")
     public ResponseEntity<String> saveManyAppointments() {
@@ -63,4 +81,38 @@ public class AppointmentController {
         }
     }
 
+    @GetMapping("/data/all")
+    public ResponseEntity<DataResponse> getAllData() {
+        List<SpecialUser> specialUsers = specialUserRepository.findAll();
+        List<Doctor> doctors = doctorRepository.findAll();
+        List<Organization> organizations = organizationRepository.findAll();
+        List<Assistant> assistants = assistantRepository.findAll();
+
+        DataResponse dataResponse = new DataResponse(specialUsers, doctors, organizations, assistants);
+        return new ResponseEntity<>(dataResponse, HttpStatus.OK);
+    }
+
+    // Endpoint pentru adăugarea unei noi programări
+    @PostMapping("/add")
+    public ResponseEntity<Appointment> addAppointment(@RequestBody Appointment appointment) {
+        Appointment newAppointment = appointmentService.addAppointment(appointment);
+        return new ResponseEntity<>(newAppointment, HttpStatus.CREATED);
+    }
+}
+
+@Getter
+@Setter
+class DataResponse {
+    // Getteri și setteri
+    private List<SpecialUser> specialUsers;
+    private List<Doctor> doctors;
+    private List<Organization> organizations;
+    private List<Assistant> assistants;
+
+    public DataResponse(List<SpecialUser> specialUsers, List<Doctor> doctors, List<Organization> organizations, List<Assistant> assistants) {
+        this.specialUsers = specialUsers;
+        this.doctors = doctors;
+        this.organizations = organizations;
+        this.assistants = assistants;
+    }
 }

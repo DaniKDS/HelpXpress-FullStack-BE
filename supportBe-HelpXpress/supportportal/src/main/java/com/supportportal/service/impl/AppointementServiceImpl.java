@@ -1,6 +1,6 @@
 package com.supportportal.service.impl;
 
-import com.supportportal.domain.Appointment;
+import com.supportportal.domain.*;
 import com.supportportal.repository.AppointmentRepository;
 import com.supportportal.repository.OrganizationRepository;
 import com.supportportal.repository.users.AssistantRepository;
@@ -10,6 +10,7 @@ import com.supportportal.service.inter.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -114,5 +115,18 @@ public class AppointementServiceImpl implements AppointmentService {
     public List<Appointment> findAppointmentsByAssistantUsername(String username) {
         // Assuming you have a method to find all appointments for a specific assistant's special users
         return appointmentRepository.findAppointmentsByAssistantUsername(username);
+    }
+    @Override
+    @Transactional
+    public Appointment addAppointment(Appointment appointment) {
+        // Obține specialUser pentru a seta assistantId
+        SpecialUser specialUser = specialUserRepository.findById(appointment.getSpecialUser().getId())
+            .orElseThrow(() -> new RuntimeException("Special User not found"));
+
+        // Setează assistantId din specialUser
+        appointment.setAssistant(specialUser.getAssistant());
+
+        // Salvează programarea
+        return appointmentRepository.save(appointment);
     }
 }
