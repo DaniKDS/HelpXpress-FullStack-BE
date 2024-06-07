@@ -15,7 +15,6 @@ import java.util.Random;
 
 @Service
 public class AssistantService {
-
     private final UserRepository userRepository;
     private final AssistantRepository assistantRepository;
 

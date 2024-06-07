@@ -17,6 +17,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.persistence.NoResultException;
 import java.io.IOException;
@@ -81,10 +82,10 @@ public class ExceptionHandling implements ErrorController {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());
     }
 
-//    @ExceptionHandler(NoHandlerFoundException.class)
-//    public ResponseEntity<HttpResponse> noHandlerFoundException(NoHandlerFoundException e) {
-//        return createHttpResponse(BAD_REQUEST, "There is no mapping for this URL");
-//    }
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<HttpResponse> noHandlerFoundException(NoHandlerFoundException e) {
+        return createHttpResponse(BAD_REQUEST, "There is no mapping for this URL");
+    }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<HttpResponse> methodNotSupportedException(HttpRequestMethodNotSupportedException exception) {

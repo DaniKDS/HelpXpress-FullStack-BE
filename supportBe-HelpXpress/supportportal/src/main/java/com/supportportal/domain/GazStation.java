@@ -20,7 +20,7 @@ public class GazStation implements Serializable {
     private String locatie;
     private String brand; // De exemplu, "MOL", "ROMPETROL", etc.
 
-    private String telefon;   // Câmp nou pentru numărul de telefon al benzinăriei
+    private String telefon;
     private String email;
 
     @ManyToMany(mappedBy = "benzinarii")

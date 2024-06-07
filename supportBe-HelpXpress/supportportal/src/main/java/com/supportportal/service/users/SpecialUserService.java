@@ -26,7 +26,6 @@ public class SpecialUserService {
         this.assistantRepository = assistantRepository;
         this.doctorRepository = doctorRepository;
     }
-
     public List<User> findAllSpecialPersons() {
         return userRepository.findAllByRole(ROLE_ASSISTANT.name());
     }

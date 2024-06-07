@@ -20,9 +20,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Autowired
     private OrganizationRepository organizationRepository;
-
     private SpecialUserRepository specialUserRepository;
-
     private Random random = new Random();
 
     // Liste cu date pentru generarea aleatoare
@@ -43,7 +41,6 @@ public class OrganizationServiceImpl implements OrganizationService {
     public OrganizationServiceImpl(SpecialUserRepository specialUserRepository) {
         this.specialUserRepository = specialUserRepository;
     }
-
     // Metoda pentru a adăuga 100 de organizații aleatorii
     public void addManyOrganizations() {
         List<Organization> organizations = new ArrayList<>();
@@ -64,7 +61,6 @@ public class OrganizationServiceImpl implements OrganizationService {
 
             organizations.add(organization);
         }
-
         organizationRepository.saveAll(organizations); // Salvăm toate organizațiile generate în baza de date
     }
     public void addManySpecialUserOrganizations() {

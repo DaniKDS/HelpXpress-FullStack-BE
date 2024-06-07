@@ -103,7 +103,7 @@ public class AppointmentController {
 @Getter
 @Setter
 class DataResponse {
-    // Getteri și setteri
+
     private List<SpecialUser> specialUsers;
     private List<Doctor> doctors;
     private List<Organization> organizations;

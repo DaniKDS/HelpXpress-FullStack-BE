@@ -32,7 +32,7 @@ public class User implements Serializable {
     private Date lastLoginDate;
     private Date lastLoginDateDisplay;
     private Date joinDate;
-    private String role; //ROLE_USER{ read, edit }, ROLE_ADMIN {delete}, ROLE_DOCTOR{read, edit-analize}, ROLE_ASSISTANT
+    private String role; //ROLE_USER{ read, edit }, ROLE_ADMIN {delete}, ROLE_DOCTOR{read, edit}, ROLE_ASSISTANT
     private String[] authorities;
     private boolean isActive;
     private boolean isNotLocked;

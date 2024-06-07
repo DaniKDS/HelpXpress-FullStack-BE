@@ -26,7 +26,6 @@ public class DoctorService {
     @Autowired
     private SpecialUserService specialUserService;
     private final SpecialUserRepository specialUserRepository;
-
     private final AppointmentRepository appointmentRepository;
     private final DoctorRepository doctorRepository;
 

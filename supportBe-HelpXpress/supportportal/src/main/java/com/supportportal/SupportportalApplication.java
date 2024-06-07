@@ -16,12 +16,10 @@ import static com.supportportal.constant.FileConstant.USER_FOLDER;
 
 @SpringBootApplication
 public class SupportportalApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(SupportportalApplication.class, args);
 		new File(USER_FOLDER).mkdirs();
 	}
-
 	@Bean
 	public CorsFilter corsFilter() {
 		UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
@@ -37,7 +35,6 @@ public class SupportportalApplication {
 		urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
 		return new CorsFilter(urlBasedCorsConfigurationSource);
 	}
-
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();

@@ -22,22 +22,16 @@ import java.util.Random;
 @Service
 @Transactional
 public class ReviewServiceImpl implements ReviewService {
-
     @Autowired
     private ReviewRepository reviewRepository;
-
     @Autowired
     private SpecialUserRepository specialUserRepository;
-
     @Autowired
     private OrganizationRepository organizationRepository;
-
     @Autowired
     private DoctorRepository doctorRepository;
-
     @Autowired
     private AssistantRepository assistantRepository;
-
     private static final String[] COMMENTS = {
         "Accesibilitatea aplicației este excelentă.",
         "Am întâmpinat dificultăți în navigarea prin meniu.",
@@ -157,14 +151,9 @@ public class ReviewServiceImpl implements ReviewService {
         }
         return ids.get(random.nextInt(ids.size()));
     }
-
-    // Trebuie să implementezi metodele de a obține id-urile valide pentru fiecare entitate
     private List<Long> getValidSpecialUserIds() {
         return specialUserRepository.findAllIds();
     }
-
-
-
     private List<Long> getValidOrganizationIds() {
         return organizationRepository.findAllIds();
     }
