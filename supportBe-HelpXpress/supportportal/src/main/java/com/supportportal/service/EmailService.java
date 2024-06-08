@@ -88,4 +88,62 @@ public class EmailService {
         smtpTransport.sendMessage(message, message.getAllRecipients());
         smtpTransport.close();
     }
+
+    public void createContactEmail(Map<String, Object> contactDetails) throws MessagingException {
+        String name = (String) contactDetails.get("name");
+        String email = (String) contactDetails.get("email");
+        String messageContent = (String) contactDetails.get("message");
+
+        Message message = new MimeMessage(getEmailSession());
+        message.setFrom(new InternetAddress(FROM_EMAIL));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("HelpXpress1@gmail.com", false));
+        message.setSubject("Mesaj de la Contact HelpXpress");
+
+        String emailContent = String.format(
+            "Bună ziua!\n\nAți primit un nou mesaj de la utilizatorul %s.\n\nDetalii mesaj:\n" +
+                "- Email: %s\n" +
+                "- Mesaj: %s\n\n" +
+                "Cu respect,\nEchipa HelpXpress",
+            name, email, messageContent
+        );
+
+        message.setText(emailContent);
+        message.setSentDate(new Date());
+        message.saveChanges();
+
+        SMTPTransport smtpTransport = (SMTPTransport) getEmailSession().getTransport(SIMPLE_MAIL_TRANSFER_PROTOCOL);
+        smtpTransport.connect(GMAIL_SMTP_SERVER, USERNAME, PASSWORD);
+        smtpTransport.sendMessage(message, message.getAllRecipients());
+        smtpTransport.close();
+    }
+    public void createReviewEmail(Map<String, Object> reviewDetails) throws MessagingException {
+        String comment = (String) reviewDetails.get("comment");
+        String rating = (String) reviewDetails.get("rating");
+        String doctor = (String) reviewDetails.get("doctor");
+        String organization = (String) reviewDetails.get("organization");
+
+        Message message = new MimeMessage(getEmailSession());
+        message.setFrom(new InternetAddress(FROM_EMAIL));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("HelpXpress1@gmail.com", false));
+        message.setSubject("Nouă Recenzie de la Utilizator");
+
+        String emailContent = String.format(
+            "Bună ziua!\n\nAți primit o nouă recenzie.\n\nDetalii recenzie:\n" +
+                "- Comentariu: %s\n" +
+                "- Rating: %s\n" +
+                "- Doctor: %s\n" +
+                "- Organizație: %s\n\n" +
+                "Cu respect,\nEchipa HelpXpress",
+            comment, rating, doctor, organization
+        );
+
+        message.setText(emailContent);
+        message.setSentDate(new Date());
+        message.saveChanges();
+
+        SMTPTransport smtpTransport = (SMTPTransport) getEmailSession().getTransport(SIMPLE_MAIL_TRANSFER_PROTOCOL);
+        smtpTransport.connect(GMAIL_SMTP_SERVER, USERNAME, PASSWORD);
+        smtpTransport.sendMessage(message, message.getAllRecipients());
+        smtpTransport.close();
+    }
 }
