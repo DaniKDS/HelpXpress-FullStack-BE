@@ -24,15 +24,17 @@ The backend of HelpXpress is structured into several main packages, each handlin
 ### Authentication and Authorization
 - **POST `/api/auth/login`**: Authenticates a user and returns a JWT token.
 - **POST `/api/auth/register`**: Registers a new user in the system.
-
+-...
 ### User Management
 - **GET `/api/users/{id}`**: Returns details of a user.
 - **PUT `/api/users/{id}`**: Updates user details.
 - **DELETE `/api/users/{id}`**: Deletes a user from the system.
+- ...
 
 ### Additional Services
 - **GET `/api/services`**: Lists available services.
 - **POST `/api/services`**: Adds a new service to the offering.
+- ...
 
 ## Security
 
